@@ -1,5 +1,5 @@
 import { RouteProps } from "../routes/types";
-import PicturePage from "./page";
+import PicturePage, { CreatePicturePage, EditPicturePage } from "./page";
 
 const pictureRoute = {
   path: "/pictures/:id",
@@ -8,9 +8,14 @@ const pictureRoute = {
 
 export default pictureRoute;
 
-const editPictureRoute = {
-  path: "/pictures/:id/edit",
-  component: PicturePage,
+const createPictureRoute = {
+  path: "/pictures/create",
+  component: CreatePicturePage,
 } as RouteProps;
 
-export { editPictureRoute };
+const editPictureRoute = {
+  path: "/pictures/:id/edit",
+  component: EditPicturePage,
+} as RouteProps;
+
+export { createPictureRoute, editPictureRoute };

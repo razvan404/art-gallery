@@ -10,6 +10,7 @@ import {
   IonBackButton,
   IonButton,
   IonIcon,
+  IonInfiniteScroll,
 } from "@ionic/react";
 import OverlayMenu from "./overlayMenu";
 import { Link } from "react-router-dom";
@@ -22,6 +23,7 @@ type OverlayProps = {
   backHref?: string;
   color?: string;
   editHref?: string;
+  fixedComponent?: React.ReactNode;
 };
 
 const DefaultOverlay = ({
@@ -31,6 +33,7 @@ const DefaultOverlay = ({
   backHref,
   color = "success",
   editHref,
+  fixedComponent,
 }: OverlayProps) => {
   return (
     <>
@@ -46,11 +49,9 @@ const DefaultOverlay = ({
                 </IonButtons>
                 {editHref && (
                   <IonButtons slot="end">
-                    <Link to={editHref}>
-                      <IonButton color={"light"}>
-                        <IonIcon size={"large"} icon={constructOutline} />
-                      </IonButton>
-                    </Link>
+                    <IonButton href={editHref} color={"light"}>
+                      <IonIcon size={"large"} icon={constructOutline} />
+                    </IonButton>
                   </IonButtons>
                 )}
               </>
@@ -58,7 +59,10 @@ const DefaultOverlay = ({
             {title && <IonTitle>{title}</IonTitle>}
           </IonToolbar>
         </IonHeader>
-        <IonContent className="ion-padding">{children}</IonContent>
+        <IonContent className="ion-padding">
+          <IonInfiniteScroll>{children}</IonInfiniteScroll>
+          {fixedComponent}
+        </IonContent>
       </IonPage>
     </>
   );

@@ -10,6 +10,9 @@ export const resourceURL = (resource: string) =>
 
 export const imageUrl = (image: string) => `http://${baseURL}/uploads/${image}`;
 
+export const downloadImageUrl = (image: string) =>
+  `${imageUrl(image)}/download`;
+
 const withLogs = <T>(
   promise: Promise<Response<T>>,
   fnName: string

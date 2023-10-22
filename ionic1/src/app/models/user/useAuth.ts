@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as API from "../../api";
+import UserAPI from "./userApi";
 import { User } from "./types";
 import { logger } from "../../core/logger";
 
@@ -60,35 +60,16 @@ const userReducer = (
   }
 };
 
-const resourceURL = API.resourceURL("users");
-
-const useUsers = () => {
+const useAuth = () => {
   const [state, dispatch] = React.useReducer(userReducer, initialState);
   const { currentUser, loading, error } = state;
-
-  const findUserById = React.useCallback(async (id: string) => {
-    try {
-      log("findUserById - started");
-      const user = await API.get<User[]>(`${resourceURL}/${id}}`);
-      log("findUserById - succeeded");
-      return user;
-    } catch (err: any) {
-      log("findUserById - failed -", err.message);
-      return undefined;
-    }
-  }, []);
 
   const saveUser = React.useCallback(async (user: User) => {
     try {
       dispatch({ type: USERS_LOADING });
       log("saveUser - started");
-      if (user.id) {
-        user = await API.put<User>(`${resourceURL}/${user.id}`, user);
-        dispatch({ type: USERS_SUCCEEDED, payload: user });
-      } else {
-        user = await API.post<User>(resourceURL, user);
-        dispatch({ type: USERS_SUCCEEDED, payload: user });
-      }
+      user = await UserAPI.save(user);
+      dispatch({ type: USERS_SUCCEEDED, payload: user });
       log("saveUser - succeeded");
     } catch (err: any) {
       dispatch({ type: USERS_FAILED, payload: err.message });
@@ -96,11 +77,16 @@ const useUsers = () => {
     }
   }, []);
 
-  const deleteUser = React.useCallback(async (user: User) => {
+  const deleteUser = React.useCallback(async () => {
     dispatch({ type: USERS_LOADING });
     log("deleteUser - started");
+    if (!currentUser?.id) {
+      dispatch({ type: USERS_FAILED, payload: "No user to delete" });
+      log("deleteUser - failed - No user to delete");
+      return;
+    }
     try {
-      await API.del<User>(`${resourceURL}/${user.id}`);
+      await UserAPI.delete(currentUser.id);
       dispatch({ type: USERS_SUCCEEDED });
       log("deleteUser - succeeded");
     } catch (err: any) {
@@ -109,20 +95,15 @@ const useUsers = () => {
     }
   }, []);
 
-  const login = React.useCallback(
-    async (username: string, password: string) => {},
-    []
-  );
+  const login = React.useCallback(async (email: string, password: string) => {},
+  []);
 
-  const logout = React.useCallback(async () => {
-    dispatch({ type: USERS_LOGOUT });
-  }, []);
+  const logout = React.useCallback(async () => {}, []);
 
   return {
     currentUser,
     loading,
     error,
-    findUserById,
     saveUser,
     deleteUser,
     login,
@@ -130,4 +111,4 @@ const useUsers = () => {
   };
 };
 
-export default useUsers;
+export default useAuth;

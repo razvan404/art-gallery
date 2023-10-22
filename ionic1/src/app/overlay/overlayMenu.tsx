@@ -1,21 +1,18 @@
-import { Link } from "react-router-dom";
 import {
   IonHeader,
   IonToolbar,
   IonTitle,
   IonContent,
   IonMenu,
-  IonMenuButton,
   IonList,
   IonItem,
-  IonLabel,
 } from "@ionic/react";
-import useUsers from "../models/user/useUsers";
 
 import styles from "./styles/overlayMenu.module.css";
+import { useAuth } from "../models";
 
 const OverlayMenu = () => {
-  const { currentUser, logout } = useUsers();
+  const { currentUser, logout } = useAuth();
 
   return (
     <IonMenu contentId="main-content">
@@ -26,32 +23,30 @@ const OverlayMenu = () => {
       </IonHeader>
       <IonContent className={styles.menuContent}>
         <IonList className={styles.menuList}>
-          <Link className={styles.menuLink} to="/gallery">
-            <IonItem button>Gallery</IonItem>
-          </Link>
-          <Link className={styles.menuLink} to="/about">
-            <IonItem button>
-              <IonLabel>About</IonLabel>
-            </IonItem>
-          </Link>
-          <Link className={styles.menuLink} to="/contact">
-            <IonItem button>Contact</IonItem>
-          </Link>
+          <IonItem button href="/gallery">
+            Gallery
+          </IonItem>
+          <IonItem button href="/about">
+            About
+          </IonItem>
+          <IonItem button href="/contact">
+            Contact
+          </IonItem>
         </IonList>
         <IonList className={styles.menuList}>
           {currentUser ? (
             <>
-              <Link className={styles.menuLink} to="/profile">
-                <IonItem button>Your Profile</IonItem>
-              </Link>
+              <IonItem button href="/profile">
+                Your Profile
+              </IonItem>
               <IonItem button onClick={logout}>
                 Logout
               </IonItem>
             </>
           ) : (
-            <Link className={styles.menuLink} to="/login">
-              <IonItem button>Login</IonItem>
-            </Link>
+            <IonItem button href="/login">
+              Login
+            </IonItem>
           )}
         </IonList>
       </IonContent>

@@ -1,26 +1,19 @@
-import * as React from "react";
-import { useParams } from "react-router-dom";
-import { Picture, PictureAPI } from "../models";
 import DefaultOverlay from "../overlay/defaultOverlay";
 import PictureComponent from "./pictureComponent";
+import CreatePicture from "./createPicture";
+import EditPicture from "./editPicture";
 import { IonLoading } from "@ionic/react";
+import useParamsPicture from "./useParamsPicture";
 
 const PicturePage = () => {
-  const { id } = useParams<{ id: string }>();
-  const [picture, setPicture] = React.useState<Picture | undefined>();
-
-  React.useEffect(() => {
-    PictureAPI.findById(id).then((fetchedPicture) => {
-      setPicture(fetchedPicture);
-    });
-  }, [id]);
+  const picture = useParamsPicture();
 
   return (
     <DefaultOverlay
       title={picture?.title}
       color={"medium"}
       backHref={"/gallery"}
-      editHref={`/pictures/${id}/edit`}
+      editHref={`/pictures/${picture?.id}/edit`}
     >
       <IonLoading isOpen={!picture} />
       {picture && <PictureComponent picture={picture} />}
@@ -29,3 +22,32 @@ const PicturePage = () => {
 };
 
 export default PicturePage;
+
+const CreatePicturePage = () => {
+  return (
+    <DefaultOverlay
+      color={"medium"}
+      title={"Create Picture"}
+      backHref={"/gallery"}
+    >
+      <CreatePicture />
+    </DefaultOverlay>
+  );
+};
+
+const EditPicturePage = () => {
+  const picture = useParamsPicture();
+
+  return (
+    <DefaultOverlay
+      color={"medium"}
+      title={`Edit ${picture?.title}`}
+      backHref={`/pictures/${picture?.id}`}
+    >
+      <IonLoading isOpen={!picture} />
+      {picture && <EditPicture picture={picture} />}
+    </DefaultOverlay>
+  );
+};
+
+export { CreatePicturePage, EditPicturePage };

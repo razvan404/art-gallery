@@ -6,13 +6,22 @@ import { logger } from "../../core/logger";
 const log = logger("PicturesAPI");
 const resourceUrl = API.resourceURL("pictures");
 
+const fixPicture = (picture: Picture) => {
+  return {
+    ...picture,
+    // @ts-ignore - No overload matches this call.
+    createdAt: new Date(picture.createdAt),
+  };
+};
+
 export default {
   findAll: async () => {
     try {
       log("findAll - started");
       const pictures = await API.get<Picture[]>(resourceUrl);
+      pictures;
       log("findAll - succeeded");
-      return pictures;
+      return pictures.map(fixPicture);
     } catch (err: any) {
       log("findAll - failed -", err.message);
       throw err;
@@ -23,7 +32,7 @@ export default {
       log("findPictureById - started");
       const picture = await API.get<Picture>(`${resourceUrl}/${id}`);
       log("findPictureById - succeeded");
-      return picture;
+      return fixPicture(picture);
     } catch (err: any) {
       log("findPictureById - failed -", err.message);
       throw err;
@@ -35,14 +44,14 @@ export default {
       if (!picture.id) {
         const addedPicture = await API.post<Picture>(resourceUrl, picture);
         log("savePicture - succeeded");
-        return addedPicture;
+        return fixPicture(addedPicture);
       } else {
         const updatedPicture = await API.put<Picture>(
           `${resourceUrl}/${picture.id}`,
           picture
         );
         log("savePicture - succeeded");
-        return updatedPicture;
+        return fixPicture(updatedPicture);
       }
     } catch (err: any) {
       log("savePicture - failed -", err.message);

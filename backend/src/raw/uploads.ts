@@ -14,3 +14,13 @@ uploadsRouter.get("/:file", async (req, res) => {
     res.sendStatus(404);
   }
 });
+
+uploadsRouter.get("/:file/download", async (req, res) => {
+  const file = req.params.file;
+  const filePath = `${__dirname}/../../uploads/${file}`;
+  if (fs.existsSync(filePath)) {
+    res.download(filePath);
+  } else {
+    res.sendStatus(404);
+  }
+});
