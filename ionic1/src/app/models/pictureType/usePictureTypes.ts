@@ -64,7 +64,7 @@ const usePictureTypes = React.useCallback(() => {
       log("getPictureTypes succeeded");
     } catch (err: any) {
       dispatch({ type: PICTURE_TYPES_FAILED, payload: err.message });
-      log("getPictureTypes failed", err.message);
+      log("getPictureTypes failed -", err.message);
     }
   }, []);
 

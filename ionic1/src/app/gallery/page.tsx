@@ -1,9 +1,10 @@
 import DefaultOverlay from "../overlay";
+import PictureList from "./pictureList";
 
 const GalleryPage = () => {
   return (
-    <DefaultOverlay>
-      <div>Gallery</div>
+    <DefaultOverlay title={"Gallery"}>
+      <PictureList />
     </DefaultOverlay>
   );
 };

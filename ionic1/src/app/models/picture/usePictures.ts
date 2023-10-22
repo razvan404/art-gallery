@@ -3,7 +3,7 @@ import * as API from "../../api";
 import { Picture } from "./types";
 import { logger } from "../../core/logger";
 
-const log = logger("usePictures");
+const log = logger("UsePictures");
 
 type PictureState = {
   pictures: Picture[];
@@ -24,7 +24,7 @@ type ActionPicture = {
 
 const PICTURES_LOADING = "PICTURES_LOADING";
 const PICTURES_FAILED = "PICTURES_FAILED";
-const PICTURES_FETCHED = "PICTURES_FETCHED";
+const PICTURES_SUCCEEDED = "PICTURES_SUCCEEDED";
 
 const pictureReducer: (
   state: PictureState,
@@ -38,7 +38,7 @@ const pictureReducer: (
       return { ...state, loading: true, error: "" };
     case PICTURES_FAILED:
       return { ...state, loading: false, error: action.payload };
-    case PICTURES_FETCHED:
+    case PICTURES_SUCCEEDED:
       return { ...state, loading: false, pictures: action.payload };
     default:
       return state;
@@ -57,55 +57,56 @@ const usePictures = () => {
 
   const getPictures = React.useCallback(async () => {
     try {
-      log("getPictures started");
       dispatch({ type: PICTURES_LOADING });
+      log("getPictures - started");
       const pictures = await API.get<Picture[]>(resourceURL);
-      log("getPictures succeeded");
-      dispatch({ type: PICTURES_FETCHED, payload: pictures });
+      dispatch({ type: PICTURES_SUCCEEDED, payload: pictures });
+      log("getPictures - succeeded");
     } catch (err: any) {
-      log("getPictures failed", err.message);
       dispatch({ type: PICTURES_FAILED, payload: err.message });
+      log("getPictures - failed -", err.message);
     }
   }, [pictures]);
 
-  const addPicture = React.useCallback(
-    async (picture: Picture) => {
-      try {
-        log("addPicture started");
-        dispatch({ type: PICTURES_LOADING });
-        const addedPicture = await API.post<Picture>(resourceURL, picture);
-        log("addPicture succeeded");
-        dispatch({
-          type: PICTURES_FETCHED,
-          payload: [...pictures, addedPicture],
-        });
-      } catch (err: any) {
-        log("addPicture failed", err.message);
-        dispatch({ type: PICTURES_FAILED, payload: err.message });
-      }
-    },
-    [pictures]
-  );
+  const getPictureById = React.useCallback(async (id: string) => {
+    try {
+      log("getPictureById - started");
+      const picture = await API.get<Picture[]>(`${resourceURL}/${id}}`);
+      log("getPictureById - succeeded");
+      return picture;
+    } catch (err: any) {
+      log("getPictureById - failed -", err.message);
+      return undefined;
+    }
+  }, []);
 
-  const updatePicture = React.useCallback(
+  const savePicture = React.useCallback(
     async (picture: Picture) => {
       try {
-        log("updatePicture started");
         dispatch({ type: PICTURES_LOADING });
-        const updatedPicture = await API.put<Picture>(
-          `${resourceURL}/${picture.id}`,
-          picture
-        );
-        log("updatePicture succeeded");
-        dispatch({
-          type: PICTURES_FETCHED,
-          payload: pictures.map((picture) =>
-            picture.id === updatedPicture.id ? updatedPicture : picture
-          ),
-        });
+        log("savePicture - started");
+        if (!picture.id) {
+          const addedPicture = await API.post<Picture>(resourceURL, picture);
+          dispatch({
+            type: PICTURES_SUCCEEDED,
+            payload: [...pictures, addedPicture],
+          });
+        } else {
+          const updatedPicture = await API.put<Picture>(
+            `${resourceURL}/${picture.id}`,
+            picture
+          );
+          dispatch({
+            type: PICTURES_SUCCEEDED,
+            payload: pictures.map((p) =>
+              p.id === updatedPicture.id ? updatedPicture : p
+            ),
+          });
+        }
+        log("savePicture - succeeded");
       } catch (err: any) {
-        log("updatePicture failed", err.message);
         dispatch({ type: PICTURES_FAILED, payload: err.message });
+        log("savePicture - failed -", err.message);
       }
     },
     [pictures]
@@ -115,8 +116,8 @@ const usePictures = () => {
     pictures,
     loading,
     error,
-    addPicture,
-    updatePicture,
+    getPictureById,
+    savePicture,
   };
 };
 

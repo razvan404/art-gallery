@@ -3,7 +3,11 @@ export type Picture = {
   createdAt?: Date;
   title: string;
   description?: string;
-  url: string;
+  image: string;
+  author?: {
+    id: string;
+    profileImage: string;
+  };
   authorId?: string;
   typeId?: number;
 };

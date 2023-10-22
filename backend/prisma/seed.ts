@@ -133,7 +133,7 @@ const seed = async () => {
           data: {
             title: title,
             description: description,
-            url: url,
+            image: url,
             // @ts-expect-error
             typeId: types[idx].id,
             // @ts-expect-error
