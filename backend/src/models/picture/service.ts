@@ -1,5 +1,5 @@
 import { db } from "../../utils/database";
-import { type Picture } from "./model";
+import { type Picture, type PictureMini } from "./model";
 
 export const findAll = async (): Promise<Picture[]> => {
   return await db.picture.findMany({
@@ -7,9 +7,21 @@ export const findAll = async (): Promise<Picture[]> => {
       id: true,
       createdAt: true,
       title: true,
-      url: true,
+      description: true,
+      image: true,
       authorId: true,
       typeId: true,
+    },
+  });
+};
+
+export const findAllMini = async (): Promise<PictureMini[]> => {
+  return await db.picture.findMany({
+    select: {
+      id: true,
+      title: true,
+      image: true,
+      author: { select: { username: true, profileImage: true } },
     },
   });
 };

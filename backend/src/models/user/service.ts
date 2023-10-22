@@ -6,6 +6,7 @@ export const findAll = async (): Promise<User[]> => {
     select: {
       id: true,
       username: true,
+      profileImage: true,
     },
   });
 };
@@ -18,6 +19,7 @@ export const findById = async (id: string): Promise<User | null> => {
     select: {
       id: true,
       username: true,
+      profileImage: true,
     },
   });
 };
