@@ -21,22 +21,22 @@ const withLogs = <T>(
       return Promise.resolve(res.data);
     })
     .catch((err) => {
-      log(`${fnName} - failed`);
+      log(`${fnName} - failed - ${err}`);
       return Promise.reject(err);
     });
 };
 
 export const get = <T>(path: string): Promise<T> =>
-  withLogs<T>(axios.get(path, { method: "GET" }), "GET");
+  withLogs<T>(axios.get(path, { method: "GET" }), `GET - ${path}`);
 
 export const post = <T>(path: string, body: any): Promise<T> =>
-  withLogs<T>(axios.post(path, body), "POST");
+  withLogs<T>(axios.post(path, body), `POST - ${path}`);
 
 export const put = <T>(path: string, body: any): Promise<T> =>
-  withLogs<T>(axios.put(path, body), "PUT");
+  withLogs<T>(axios.put(path, body), `PUT - ${path}`);
 
 export const del = <T>(path: string): Promise<T> =>
-  withLogs<T>(axios.delete(path), "DELETE");
+  withLogs<T>(axios.delete(path), `DELETE - ${path}`);
 
 type Message<T extends any> = {
   event: string;

@@ -6,7 +6,7 @@ import styles from "./styles/pictureList.module.css";
 
 const PictureList = () => {
   const { pictures } = usePictures();
-  console.log(pictures);
+
   return (
     <IonList className={styles.pictureListContainer}>
       {pictures.map((picture) => (

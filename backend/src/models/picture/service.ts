@@ -25,3 +25,18 @@ export const findAllMini = async (): Promise<PictureMini[]> => {
     },
   });
 };
+
+export const findById = async (id: string): Promise<Picture | null> => {
+  return await db.picture.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      createdAt: true,
+      title: true,
+      description: true,
+      image: true,
+      authorId: true,
+      typeId: true,
+    },
+  });
+};

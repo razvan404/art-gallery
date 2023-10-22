@@ -1,5 +1,5 @@
 import * as React from "react";
-import * as API from "../../api";
+import PictureAPI from "./pictureApi";
 import { Picture } from "./types";
 import { logger } from "../../core/logger";
 
@@ -26,10 +26,7 @@ const PICTURES_LOADING = "PICTURES_LOADING";
 const PICTURES_FAILED = "PICTURES_FAILED";
 const PICTURES_SUCCEEDED = "PICTURES_SUCCEEDED";
 
-const pictureReducer: (
-  state: PictureState,
-  action: ActionPicture
-) => PictureState = (
+const pictureReducer = (
   state: PictureState = initialState,
   action: ActionPicture
 ): PictureState => {
@@ -45,22 +42,20 @@ const pictureReducer: (
   }
 };
 
-const resourceURL = API.resourceURL("pictures");
-
 const usePictures = () => {
   const [state, dispatch] = React.useReducer(pictureReducer, initialState);
   const { pictures, loading, error } = state;
 
   React.useEffect(() => {
-    getPictures();
+    findPictures();
   }, []);
 
-  const getPictures = React.useCallback(async () => {
+  const findPictures = React.useCallback(async () => {
     try {
       dispatch({ type: PICTURES_LOADING });
       log("getPictures - started");
-      const pictures = await API.get<Picture[]>(resourceURL);
-      dispatch({ type: PICTURES_SUCCEEDED, payload: pictures });
+      const fetchedPictures = await PictureAPI.findAll();
+      dispatch({ type: PICTURES_SUCCEEDED, payload: fetchedPictures });
       log("getPictures - succeeded");
     } catch (err: any) {
       dispatch({ type: PICTURES_FAILED, payload: err.message });
@@ -68,42 +63,26 @@ const usePictures = () => {
     }
   }, [pictures]);
 
-  const getPictureById = React.useCallback(async (id: string) => {
-    try {
-      log("getPictureById - started");
-      const picture = await API.get<Picture[]>(`${resourceURL}/${id}}`);
-      log("getPictureById - succeeded");
-      return picture;
-    } catch (err: any) {
-      log("getPictureById - failed -", err.message);
-      return undefined;
-    }
-  }, []);
-
   const savePicture = React.useCallback(
     async (picture: Picture) => {
       try {
         dispatch({ type: PICTURES_LOADING });
         log("savePicture - started");
-        if (!picture.id) {
-          const addedPicture = await API.post<Picture>(resourceURL, picture);
+        const isNewPicture = !picture.id;
+        const fetchedPicture = await PictureAPI.save(picture);
+        if (isNewPicture) {
           dispatch({
             type: PICTURES_SUCCEEDED,
-            payload: [...pictures, addedPicture],
+            payload: [...pictures, fetchedPicture],
           });
         } else {
-          const updatedPicture = await API.put<Picture>(
-            `${resourceURL}/${picture.id}`,
-            picture
-          );
           dispatch({
             type: PICTURES_SUCCEEDED,
             payload: pictures.map((p) =>
-              p.id === updatedPicture.id ? updatedPicture : p
+              p.id === fetchedPicture.id ? fetchedPicture : p
             ),
           });
         }
-        log("savePicture - succeeded");
       } catch (err: any) {
         dispatch({ type: PICTURES_FAILED, payload: err.message });
         log("savePicture - failed -", err.message);
@@ -116,7 +95,6 @@ const usePictures = () => {
     pictures,
     loading,
     error,
-    getPictureById,
     savePicture,
   };
 };

@@ -2,75 +2,59 @@ import React from "react";
 import {
   IonButtons,
   IonHeader,
-  IonMenu,
   IonMenuButton,
   IonPage,
   IonTitle,
   IonToolbar,
   IonContent,
-  IonList,
-  IonItem,
-  IonLabel,
+  IonBackButton,
+  IonButton,
+  IonIcon,
 } from "@ionic/react";
+import OverlayMenu from "./overlayMenu";
 import { Link } from "react-router-dom";
-
-import styles from "./styles/defaultOverlay.module.css";
-import useUsers from "../models/user/useUsers";
+import { constructOutline } from "ionicons/icons";
 
 type OverlayProps = {
   title?: string;
   children?: React.ReactNode;
+  disableButtons?: boolean;
+  backHref?: string;
+  color?: string;
+  editHref?: string;
 };
 
-const DefaultOverlay = ({ title, children }: OverlayProps) => {
-  const { currentUser, logout } = useUsers();
-
+const DefaultOverlay = ({
+  title,
+  children,
+  disableButtons,
+  backHref,
+  color = "success",
+  editHref,
+}: OverlayProps) => {
   return (
     <>
-      <IonMenu contentId="main-content">
-        <IonHeader>
-          <IonToolbar color="primary">
-            <IonTitle>Art Menu</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className={styles.menuContent}>
-          <IonList className={styles.menuList}>
-            <Link className={styles.menuLink} to="/gallery">
-              <IonItem button>Gallery</IonItem>
-            </Link>
-            <Link className={styles.menuLink} to="/about">
-              <IonItem button>
-                <IonLabel>About</IonLabel>
-              </IonItem>
-            </Link>
-            <Link className={styles.menuLink} to="/contact">
-              <IonItem button>Contact</IonItem>
-            </Link>
-          </IonList>
-          <IonList className={styles.menuList}>
-            {currentUser ? (
-              <>
-                <Link className={styles.menuLink} to="/profile">
-                  <IonItem button>Your Profile</IonItem>
-                </Link>
-                <IonItem button onClick={logout}>
-                  Logout
-                </IonItem>
-              </>
-            ) : (
-              <Link className={styles.menuLink} to="/login">
-                <IonItem button>Login</IonItem>
-              </Link>
-            )}
-          </IonList>
-        </IonContent>
-      </IonMenu>
+      <OverlayMenu />
       <IonPage id="main-content">
         <IonHeader>
-          <IonToolbar color="danger">
-            <IonButtons slot="start">
-              <IonMenuButton></IonMenuButton>
-            </IonButtons>
+          <IonToolbar color={color}>
+            {!disableButtons && (
+              <>
+                <IonButtons slot="start">
+                  <IonMenuButton />
+                  {backHref && <IonBackButton defaultHref={backHref} />}
+                </IonButtons>
+                {editHref && (
+                  <IonButtons slot="end">
+                    <Link to={editHref}>
+                      <IonButton color={"light"}>
+                        <IonIcon size={"large"} icon={constructOutline} />
+                      </IonButton>
+                    </Link>
+                  </IonButtons>
+                )}
+              </>
+            )}
             {title && <IonTitle>{title}</IonTitle>}
           </IonToolbar>
         </IonHeader>

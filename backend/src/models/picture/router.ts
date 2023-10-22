@@ -12,3 +12,13 @@ pictureRouter.get("/", async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+
+// GET pictures/:id
+pictureRouter.get("/:id", async (req, res) => {
+  try {
+    const picture = await pictureService.findById(req.params.id);
+    res.status(200).send(picture);
+  } catch (err: any) {
+    res.status(500).send(err.message);
+  }
+});

@@ -26,10 +26,7 @@ const PICTURE_TYPES_LOADING = "PICTURE_TYPES_LOADING";
 const PICTURE_TYPES_FAILED = "PICTURE_TYPES_FAILED";
 const PICTURE_TYPES_SUCCEEDED = "PICTURE_TYPES_SUCCEEDED";
 
-const pictureTypeReducer: (
-  state: PictureTypeState,
-  action: ActionPictureType
-) => PictureTypeState = (
+const pictureTypeReducer = (
   state: PictureTypeState = initialState,
   action: ActionPictureType
 ): PictureTypeState => {
@@ -45,11 +42,10 @@ const pictureTypeReducer: (
   }
 };
 
-const resourceURL = API.resourceURL("pictureTypes");
-
-const usePictureTypes = React.useCallback(() => {
+const usePictureTypes = () => {
   const [state, dispatch] = React.useReducer(pictureTypeReducer, initialState);
   const { pictureTypes, loaded, error } = state;
+  const resourceURL = API.resourceURL("pictureTypes");
 
   React.useEffect(() => {
     getPictureTypes();
@@ -69,6 +65,6 @@ const usePictureTypes = React.useCallback(() => {
   }, []);
 
   return { pictureTypes, loaded, error };
-}, []);
+};
 
 export default usePictureTypes;
