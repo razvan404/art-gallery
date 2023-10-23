@@ -22,3 +22,16 @@ pictureRouter.get("/:id", async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+
+// PUT pictures/
+pictureRouter.put("/:id", async (req, res) => {
+  try {
+    const picture = await pictureService.update({
+      ...req.body,
+      id: req.params.id,
+    });
+    res.status(200).send(picture);
+  } catch (err: any) {
+    res.status(500).send(err.message);
+  }
+});

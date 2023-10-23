@@ -1,6 +1,5 @@
-import * as React from "react";
 import * as API from "../../api";
-import { Picture } from "./types";
+import { Picture, PictureToSave } from "./types";
 import { logger } from "../../core/logger";
 
 const log = logger("PicturesAPI");
@@ -38,7 +37,7 @@ export default {
       throw err;
     }
   },
-  save: async (picture: Picture) => {
+  save: async (picture: PictureToSave) => {
     try {
       log("savePicture - started");
       if (!picture.id) {

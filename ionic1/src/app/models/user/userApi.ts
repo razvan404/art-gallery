@@ -32,4 +32,14 @@ export default {
       throw err;
     }
   },
+  delete: async (id: string) => {
+    try {
+      log("delete - started");
+      await API.del<User>(`${resourceURL}/${id}`);
+      log("delete - succeeded");
+    } catch (err: any) {
+      log("delete - failed -", err.message);
+      throw err;
+    }
+  },
 };

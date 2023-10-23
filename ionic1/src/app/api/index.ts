@@ -15,16 +15,16 @@ export const downloadImageUrl = (image: string) =>
 
 const withLogs = <T>(
   promise: Promise<Response<T>>,
-  fnName: string
+  ...args: string[]
 ): Promise<T> => {
-  log(`${fnName} - started`);
+  log(...args, `- started`);
   return promise
     .then((res) => {
-      log(`${fnName} - succeeded`);
+      log(...args, `- succeeded`);
       return Promise.resolve(res.data);
     })
     .catch((err) => {
-      log(`${fnName} - failed - ${err}`);
+      log(...args, `- failed - ${err}`);
       return Promise.reject(err);
     });
 };
@@ -33,10 +33,10 @@ export const get = <T>(path: string): Promise<T> =>
   withLogs<T>(axios.get(path, { method: "GET" }), `GET - ${path}`);
 
 export const post = <T>(path: string, body: any): Promise<T> =>
-  withLogs<T>(axios.post(path, body), `POST - ${path}`);
+  withLogs<T>(axios.post(path, body), `POST - ${path} -`, body);
 
 export const put = <T>(path: string, body: any): Promise<T> =>
-  withLogs<T>(axios.put(path, body), `PUT - ${path}`);
+  withLogs<T>(axios.put(path, body), `PUT - ${path} -`, body);
 
 export const del = <T>(path: string): Promise<T> =>
   withLogs<T>(axios.delete(path), `DELETE - ${path}`);

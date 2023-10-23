@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IonButton, IonIcon, IonImg, IonLabel, IonToast } from "@ionic/react";
 import { cloudDownloadOutline, shareSocialOutline } from "ionicons/icons";
-import { Picture } from "../models";
+import { Picture, PictureType, usePictureTypes } from "../models";
 import { downloadImageUrl, imageUrl } from "../api";
 import MiniThumbnail from "../user/miniThumbnail";
 
@@ -13,6 +13,22 @@ type Props = {
 
 const PictureComponent = ({ picture }: Props) => {
   const [showToast, setShowToast] = React.useState(false);
+  const {
+    pictureTypes,
+    loaded: pictureTypesLoaded,
+    error: pictureTypesError,
+  } = usePictureTypes();
+  const [pictureType, setPictureType] = React.useState<PictureType>();
+
+  React.useEffect(() => {
+    if (!pictureTypesLoaded || pictureTypesError) {
+      return;
+    }
+    if (pictureTypes && picture.typeId !== undefined) {
+      setPictureType(pictureTypes[picture.typeId]);
+    }
+  }, [pictureTypes, pictureTypesLoaded, pictureTypesLoaded]);
+
   const pictureUrl = imageUrl(picture.image);
   const downloadPictureUrl = downloadImageUrl(picture.image);
 
@@ -35,7 +51,7 @@ const PictureComponent = ({ picture }: Props) => {
             <IonLabel>Download</IonLabel>
           </IonButton>
           <IonButton
-            color="warning"
+            color="tertiary"
             onClick={() => {
               const currentUrl = window.location.href;
               navigator.clipboard.writeText(currentUrl).then(() => {
@@ -50,6 +66,9 @@ const PictureComponent = ({ picture }: Props) => {
       </div>
       <div className={styles.detailsRow}>
         <IonLabel className={styles.title}>{picture.title}</IonLabel>
+        <IonLabel className={styles.type}>
+          Type: {pictureType?.name ?? "unknown"}
+        </IonLabel>
         <IonLabel className={styles.description}>
           "{picture.description}"
         </IonLabel>

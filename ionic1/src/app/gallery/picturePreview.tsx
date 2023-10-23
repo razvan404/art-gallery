@@ -14,20 +14,11 @@ const PicturePreview = ({ picture }: Props) => {
   const pictureLink = imageUrl(picture.image ?? "default.png");
 
   return (
-    <Link to={`/pictures/${picture.id}`}>
-      <IonCard className={styles.container}>
-        <IonImg
-          className={styles.image}
-          src={pictureLink}
-          alt={picture.title}
-        />
-        <div className={styles.shadowOverlay} />
-        <MiniThumbnail
-          className={styles.authorContainer}
-          user={picture.author}
-        />
-      </IonCard>
-    </Link>
+    <IonCard href={`/pictures/${picture.id}`} className={styles.container}>
+      <IonImg className={styles.image} src={pictureLink} alt={picture.title} />
+      <div className={styles.shadowOverlay} />
+      <MiniThumbnail className={styles.authorContainer} user={picture.author} />
+    </IonCard>
   );
 };
 

@@ -1,5 +1,15 @@
 import { User } from "../user/types";
 import { PictureType } from "../pictureType/types";
+import { Photo } from "@capacitor/camera";
+
+export type PictureToSave = {
+  id?: string;
+  title?: string;
+  image?: string;
+  rawImage?: Photo;
+  description?: string;
+  typeId?: number;
+};
 
 export type Picture = {
   id?: string;

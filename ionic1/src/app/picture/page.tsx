@@ -1,9 +1,9 @@
 import DefaultOverlay from "../overlay/defaultOverlay";
 import PictureComponent from "./pictureComponent";
-import CreatePicture from "./createPicture";
-import EditPicture from "./editPicture";
+import CreatePicture from "./savePicture";
 import { IonLoading } from "@ionic/react";
 import useParamsPicture from "./useParamsPicture";
+import SavePicture from "./savePicture";
 
 const PicturePage = () => {
   const picture = useParamsPicture();
@@ -23,14 +23,14 @@ const PicturePage = () => {
 
 export default PicturePage;
 
-const CreatePicturePage = () => {
+const SavePicturePage = () => {
   return (
     <DefaultOverlay
       color={"medium"}
-      title={"Create Picture"}
+      title={"Upload Picture"}
       backHref={"/gallery"}
     >
-      <CreatePicture />
+      <SavePicture />
     </DefaultOverlay>
   );
 };
@@ -45,9 +45,9 @@ const EditPicturePage = () => {
       backHref={`/pictures/${picture?.id}`}
     >
       <IonLoading isOpen={!picture} />
-      {picture && <EditPicture picture={picture} />}
+      {picture && <SavePicture picture={picture} />}
     </DefaultOverlay>
   );
 };
 
-export { CreatePicturePage, EditPicturePage };
+export { SavePicturePage, EditPicturePage };

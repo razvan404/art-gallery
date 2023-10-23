@@ -40,3 +40,24 @@ export const findById = async (id: string): Promise<Picture | null> => {
     },
   });
 };
+
+export const update = async (picture: Picture): Promise<Picture> => {
+  return await db.picture.update({
+    where: { id: picture.id },
+    data: {
+      title: picture.title,
+      description: picture.description,
+      image: picture.image,
+      typeId: picture.typeId,
+    },
+    select: {
+      id: true,
+      createdAt: true,
+      title: true,
+      description: true,
+      image: true,
+      authorId: true,
+      typeId: true,
+    },
+  });
+};

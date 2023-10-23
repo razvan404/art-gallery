@@ -6,13 +6,13 @@ import { logger } from "../../core/logger";
 const log = logger("usePictureTypes");
 
 type PictureTypeState = {
-  pictureTypes: [];
+  pictureTypes: { [id: number]: PictureType };
   loaded: boolean;
   error: string;
 };
 
 const initialState: PictureTypeState = {
-  pictureTypes: [],
+  pictureTypes: {},
   loaded: false,
   error: "",
 };
@@ -36,7 +36,13 @@ const pictureTypeReducer = (
     case PICTURE_TYPES_FAILED:
       return { ...state, loaded: true, error: action.payload };
     case PICTURE_TYPES_SUCCEEDED:
-      return { ...state, loaded: true, pictureTypes: action.payload };
+      return {
+        ...state,
+        loaded: true,
+        pictureTypes: Object.fromEntries(
+          action.payload?.map((type: PictureType) => [type.id, type])
+        ),
+      };
     default:
       return state;
   }
