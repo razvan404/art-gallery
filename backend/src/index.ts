@@ -16,7 +16,7 @@ const PORT = parseInt(process.env.PORT, 10);
 const app = express();
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 app.use("/uploads", uploadsRouter);
 app.use("/api/users", userRouter);
 app.use("/api/pictureTypes", pictureTypeRouter);

@@ -1,22 +1,31 @@
 import DefaultOverlay from "../overlay/defaultOverlay";
 import PictureComponent from "./pictureComponent";
-import CreatePicture from "./savePicture";
 import { IonLoading } from "@ionic/react";
 import useParamsPicture from "./useParamsPicture";
 import SavePicture from "./savePicture";
+import GlobalError from "../extra/globalError";
+import { useAuth } from "../models";
+import GlobalLoading from "../extra/globalLoading";
 
 const PicturePage = () => {
-  const picture = useParamsPicture();
+  const { picture, loading, error } = useParamsPicture();
+  const { currentUser, loading: currentUserLoading } = useAuth();
+
+  const isCurrentUserAuthor = currentUser?.id === picture?.authorId;
 
   return (
     <DefaultOverlay
       title={picture?.title}
       color={"medium"}
       backHref={"/gallery"}
-      editHref={`/pictures/${picture?.id}/edit`}
+      editHref={
+        (isCurrentUserAuthor && `/pictures/${picture?.id}/edit`) || undefined
+      }
     >
       <IonLoading isOpen={!picture} />
       {picture && <PictureComponent picture={picture} />}
+      <GlobalLoading isOpen={loading || currentUserLoading} />
+      <GlobalError error={error} />
     </DefaultOverlay>
   );
 };
@@ -36,7 +45,7 @@ const SavePicturePage = () => {
 };
 
 const EditPicturePage = () => {
-  const picture = useParamsPicture();
+  const { picture, error } = useParamsPicture();
 
   return (
     <DefaultOverlay
@@ -46,6 +55,7 @@ const EditPicturePage = () => {
     >
       <IonLoading isOpen={!picture} />
       {picture && <SavePicture picture={picture} />}
+      <GlobalError error={error} />
     </DefaultOverlay>
   );
 };

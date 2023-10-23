@@ -5,8 +5,11 @@ import { Picture, PictureAPI, UserAPI } from "../models";
 const useParamsPicture = () => {
   const { id } = useParams<{ id: string }>();
   const [picture, setPicture] = React.useState<Picture | undefined>();
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | undefined>();
 
   React.useEffect(() => {
+    setLoading(true);
     PictureAPI.findById(id)
       .then((fetchedPicture) => {
         setPicture(fetchedPicture);
@@ -25,10 +28,15 @@ const useParamsPicture = () => {
               author: fetchedUser,
             }
         );
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error.message);
+        setLoading(false);
       });
   }, [id]);
 
-  return picture;
+  return { picture, loading, error };
 };
 
 export default useParamsPicture;

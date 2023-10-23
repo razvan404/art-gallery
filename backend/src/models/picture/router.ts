@@ -1,5 +1,5 @@
 import express from "express";
-import * as pictureService from "./service";
+import pictureService from "./service";
 
 export const pictureRouter = express.Router();
 
@@ -17,6 +17,16 @@ pictureRouter.get("/", async (req, res) => {
 pictureRouter.get("/:id", async (req, res) => {
   try {
     const picture = await pictureService.findById(req.params.id);
+    res.status(200).send(picture);
+  } catch (err: any) {
+    res.status(500).send(err.message);
+  }
+});
+
+// POST pictures/
+pictureRouter.post("/", async (req, res) => {
+  try {
+    const picture = await pictureService.create(req.body);
     res.status(200).send(picture);
   } catch (err: any) {
     res.status(500).send(err.message);

@@ -17,3 +17,14 @@ export type PictureMini = {
     profileImage: string | null;
   } | null;
 };
+
+export type PictureToSave = {
+  title: string;
+  description: string;
+  authorId: string | null;
+  typeId: number;
+  rawImage: {
+    dataUrl: string;
+    format: string;
+  };
+};

@@ -8,6 +8,7 @@ export type PictureToSave = {
   image?: string;
   rawImage?: Photo;
   description?: string;
+  authorId?: string;
   typeId?: number;
 };
 

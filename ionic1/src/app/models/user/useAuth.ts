@@ -3,7 +3,7 @@ import UserAPI from "./userApi";
 import { User } from "./types";
 import { logger } from "../../core/logger";
 
-const log = logger("UseUsers");
+const log = logger("UseAuth");
 
 type UserState = {
   currentUser?: User;
@@ -63,6 +63,24 @@ const userReducer = (
 const useAuth = () => {
   const [state, dispatch] = React.useReducer(userReducer, initialState);
   const { currentUser, loading, error } = state;
+
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        dispatch({ type: USERS_LOADING });
+        log("fetchUser - started");
+        const user = await UserAPI.findById(
+          "2ccc49e7-7fcf-43af-8dd9-80601103edf8"
+        );
+        dispatch({ type: USERS_SUCCEEDED, payload: user });
+        log("fetchUser - succeeded");
+      } catch (err: any) {
+        dispatch({ type: USERS_FAILED, payload: err.message });
+        log("fetchUser - failed -", err.message);
+      }
+    };
+    fetchUser();
+  }, []);
 
   const saveUser = React.useCallback(async (user: User) => {
     try {

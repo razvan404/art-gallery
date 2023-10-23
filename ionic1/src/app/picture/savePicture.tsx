@@ -13,10 +13,18 @@ import {
 } from "@ionic/react";
 import { camera, trashBin } from "ionicons/icons";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
-import { Picture, PictureAPI, usePictureTypes, PictureToSave } from "../models";
+import {
+  Picture,
+  PictureAPI,
+  usePictureTypes,
+  PictureToSave,
+  useAuth,
+} from "../models";
 import { imageUrl } from "../api";
 
 import styles from "./styles/savePicture.module.css";
+import GlobalLoading from "../extra/globalLoading";
+import GlobalError from "../extra/globalError";
 
 type Props = {
   picture?: Picture;
@@ -26,10 +34,26 @@ const SavePicture = ({ picture }: Props) => {
   const [pictureToSave, setPictureToSave] = React.useState<PictureToSave>({
     ...picture,
   });
-  const { pictureTypes } = usePictureTypes();
+  const {
+    currentUser,
+    loading: currentUserLoading,
+    error: currentUserError,
+  } = useAuth();
+  const {
+    pictureTypes,
+    loaded: pictureTypesLoaded,
+    error: pictureTypesError,
+  } = usePictureTypes();
   const [error, setError] = React.useState<string>();
   const [success, setSuccess] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    setPictureToSave({
+      ...picture,
+      authorId: currentUser?.id,
+    });
+  }, [currentUser]);
 
   const selectPicture = React.useCallback(async () => {
     const image = await Camera.getPhoto({
@@ -58,6 +82,15 @@ const SavePicture = ({ picture }: Props) => {
     }
     if (!pictureToSave?.typeId) {
       errors.push("Type is required");
+    }
+
+    if (
+      !isNewPicture &&
+      pictureToSave.title === picture?.title &&
+      pictureToSave.description === picture?.description &&
+      pictureToSave.typeId === picture?.typeId
+    ) {
+      errors.push("No changes were made");
     }
     setError(errors.join("; "));
     return errors.length === 0;
@@ -147,7 +180,7 @@ const SavePicture = ({ picture }: Props) => {
           labelPlacement="floating"
           value={pictureToSave?.description}
           counter
-          maxlength={300}
+          maxlength={400}
           counterFormatter={(inputLength, maxLength) =>
             `${maxLength - inputLength} characters remaining`
           }
@@ -182,7 +215,9 @@ const SavePicture = ({ picture }: Props) => {
           color="warning"
           onClick={savePicture}
         >
-          {isNewPicture ? "Upload picture" : "Save changes"}
+          <IonLabel>
+            {isNewPicture ? "Upload picture" : "Save changes"}
+          </IonLabel>
         </IonButton>
         <IonAlert
           isOpen={!!error}
@@ -209,6 +244,8 @@ const SavePicture = ({ picture }: Props) => {
             },
           ]}
         />
+        <GlobalLoading isOpen={!pictureTypesLoaded || currentUserLoading} />
+        <GlobalError error={pictureTypesError || currentUserError} />
       </div>
     </>
   );

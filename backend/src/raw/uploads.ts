@@ -1,12 +1,13 @@
 import express from "express";
 import fs from "fs";
+import uploadsService from "./uploadsService";
 
 export const uploadsRouter = express.Router();
 
 // GET /uploads/:file
 uploadsRouter.get("/:file", async (req, res) => {
   const file = req.params.file;
-  const filePath = `${__dirname}/../../uploads/${file}`;
+  const filePath = uploadsService.getPath(file);
   if (fs.existsSync(filePath)) {
     res.setHeader("Content-Type", "image/jpeg");
     fs.createReadStream(filePath).pipe(res);
@@ -17,7 +18,7 @@ uploadsRouter.get("/:file", async (req, res) => {
 
 uploadsRouter.get("/:file/download", async (req, res) => {
   const file = req.params.file;
-  const filePath = `${__dirname}/../../uploads/${file}`;
+  const filePath = uploadsService.getPath(file);
   if (fs.existsSync(filePath)) {
     res.download(filePath);
   } else {
