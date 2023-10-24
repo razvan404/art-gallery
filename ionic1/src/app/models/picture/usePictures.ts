@@ -2,6 +2,7 @@ import * as React from "react";
 import PictureAPI from "./pictureApi";
 import { Picture } from "./types";
 import { logger } from "../../core/logger";
+import { newWebSocket } from "../../api";
 
 const log = logger("UsePictures");
 
@@ -47,6 +48,10 @@ const usePictures = () => {
   const { pictures, loading, error } = state;
 
   React.useEffect(() => {
+    wsEffect();
+  }, []);
+
+  React.useEffect(() => {
     findPictures();
   }, []);
 
@@ -90,6 +95,18 @@ const usePictures = () => {
     },
     [pictures]
   );
+
+  const wsEffect = () => {
+    let canceled = false;
+    log("wsEffect - connecting");
+    const closeWebSocket = newWebSocket<Picture>((message) => {
+      const { event, payload } = message;
+      log("wsEffect - pictures -", event);
+      if (event == "PICTURE_SAVED") {
+        dispatch({ type: PICTURES_SUCCEEDED, payload: [...pictures, payload] });
+      }
+    });
+  };
 
   return {
     pictures,

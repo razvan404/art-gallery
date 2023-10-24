@@ -46,23 +46,21 @@ type Message<T extends any> = {
   payload: T;
 };
 
-export const newWebSocket = <T>(
-  resource: string,
-  onMessage: (data: Message<T>) => void
-) => {
-  const ws = new WebSocket(`${webSocketURL}/${resource}`);
+export const newWebSocket = <T>(onMessage: (data: Message<T>) => void) => {
+  const ws = new WebSocket(`${webSocketURL}`);
   ws.onopen = () => {
-    log("web socket onopen");
+    log("web socket - on open");
   };
   ws.onclose = () => {
-    log("web socket onclose");
+    log("web socket - on close");
   };
   ws.onerror = (error) => {
-    log(`web socket onerror: ${error}`);
+    log("web socket - on error -", error);
   };
   ws.onmessage = (message) => {
-    log(`web socket onmessage: ${message.data}`);
-    onMessage(message.data);
+    const data = JSON.parse(message.data);
+    log("web socket - on message -", data);
+    onMessage(data);
   };
   return () => {
     ws.close();

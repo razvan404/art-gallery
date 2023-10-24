@@ -1,6 +1,7 @@
 import { db } from "../../utils/database";
 import { PictureToSave, type Picture, type PictureMini } from "./model";
 import uploadsService from "../../raw/uploadsService";
+import webSockets from "../../webSockets";
 
 export default {
   findAll: async (): Promise<Picture[]> => {
@@ -45,7 +46,7 @@ export default {
       picture.rawImage.dataUrl,
       uploadsService.generatePath(picture.rawImage.format)
     );
-    return await db.picture.create({
+    const savedPicture = await db.picture.create({
       data: {
         title: picture.title,
         description: picture.description,
@@ -63,6 +64,10 @@ export default {
         typeId: true,
       },
     });
+    if (savedPicture) {
+      webSockets.sendToAll("PICTURE_SAVED", savedPicture);
+    }
+    return savedPicture;
   },
   update: async (picture: Picture): Promise<Picture> => {
     return await db.picture.update({
