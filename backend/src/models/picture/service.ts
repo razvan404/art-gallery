@@ -1,24 +1,22 @@
 import { db } from "../../utils/database";
-import { PictureToSave, type Picture, type PictureMini } from "./model";
+import { PictureToSave, type Picture, type PictureMini } from "./types";
 import uploadsService from "../../raw/uploadsService";
 import webSockets from "../../webSockets";
 
 export default {
-  findAll: async (): Promise<Picture[]> => {
+  findAll: async (): Promise<PictureMini[]> => {
     return await db.picture.findMany({
       select: {
         id: true,
-        createdAt: true,
         title: true,
-        description: true,
         image: true,
-        authorId: true,
-        typeId: true,
+        author: { select: { username: true, profileImage: true } },
       },
     });
   },
-  findAllMini: async (): Promise<PictureMini[]> => {
+  findAllByAuthorId: async (authorId: string): Promise<PictureMini[]> => {
     return await db.picture.findMany({
+      where: { authorId },
       select: {
         id: true,
         title: true,
@@ -88,5 +86,16 @@ export default {
         typeId: true,
       },
     });
+  },
+  delete: async (id: string, userId: string): Promise<void> => {
+    const picture = await db.picture.findUnique({
+      where: { id },
+      select: { authorId: true },
+    });
+    if (picture?.authorId !== userId) {
+      throw new Error("You can only delete your own pictures");
+    }
+    await db.picture.delete({ where: { id } });
+    webSockets.sendToAll("PICTURE_DELETED", id);
   },
 };

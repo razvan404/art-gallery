@@ -1,5 +1,5 @@
 import { pictureRouter } from "./router";
-import { type Picture } from "./model";
+import { type Picture } from "./types";
 import * as pictureService from "./service";
 
 export default pictureRouter;

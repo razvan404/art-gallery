@@ -1,5 +1,5 @@
 import express from "express";
-import * as pictureTypeService from "./service";
+import pictureTypeService from "./service";
 
 export const pictureTypeRouter = express.Router();
 

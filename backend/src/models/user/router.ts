@@ -1,5 +1,5 @@
 import express from "express";
-import * as userService from "./service";
+import userService from "./service";
 
 export const userRouter = express.Router();
 

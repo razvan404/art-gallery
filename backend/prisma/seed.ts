@@ -67,14 +67,14 @@ const getPictureTypes = (): PictureType[] => [
 
 const getPictures = (): Picture[] => [
   createPicture(
-    "title1",
-    "descr1",
-    "https://w.wallhaven.cc/full/rr/wallhaven-rrpp6m.png"
+    "Wonderful Lake in the Mountains",
+    "Immerse yourself in the tranquil beauty of a mountain lake, a captivating photograph that showcases breathtaking alpine landscapes.h",
+    "fe864dfc8570dbbb.png"
   ),
   createPicture(
-    "title2",
-    "descr2",
-    "https://w.wallhaven.cc/full/m3/wallhaven-m3zjx1.jpg"
+    "Seasons Tree",
+    "'Seasons Tree' art showcases the eternal cycle of nature, displaying the ever-changing beauty of each season in a single captivating image.",
+    "aa48fc2a9ee5943f.png"
   ),
 ];
 

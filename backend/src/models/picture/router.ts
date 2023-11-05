@@ -1,12 +1,13 @@
 import express from "express";
 import pictureService from "./service";
+import { authenticateToken, userFromAuthenticatedRequest } from "../../auth";
 
 export const pictureRouter = express.Router();
 
 // GET pictures/
-pictureRouter.get("/", async (req, res) => {
+pictureRouter.get("/", async (_, res) => {
   try {
-    const pictures = await pictureService.findAllMini();
+    const pictures = await pictureService.findAll();
     res.status(200).send(pictures);
   } catch (err: any) {
     res.status(500).send(err.message);
@@ -24,9 +25,12 @@ pictureRouter.get("/:id", async (req, res) => {
 });
 
 // POST pictures/
-pictureRouter.post("/", async (req, res) => {
+pictureRouter.post("/", authenticateToken, async (req, res) => {
   try {
-    const picture = await pictureService.create(req.body);
+    const picture = await pictureService.create({
+      ...req.body,
+      userId: userFromAuthenticatedRequest(req).id,
+    });
     res.status(200).send(picture);
   } catch (err: any) {
     res.status(500).send(err.message);
@@ -34,13 +38,38 @@ pictureRouter.post("/", async (req, res) => {
 });
 
 // PUT pictures/
-pictureRouter.put("/:id", async (req, res) => {
+pictureRouter.put("/:id", authenticateToken, async (req, res) => {
   try {
     const picture = await pictureService.update({
       ...req.body,
       id: req.params.id,
+      userId: userFromAuthenticatedRequest(req).id,
     });
     res.status(200).send(picture);
+  } catch (err: any) {
+    res.status(500).send(err.message);
+  }
+});
+
+pictureRouter.delete("/:id", authenticateToken, async (req, res) => {
+  try {
+    await pictureService.delete(
+      req.params.id,
+      userFromAuthenticatedRequest(req).id as string
+    );
+    res.sendStatus(200);
+  } catch (err: any) {
+    res.status(500).send(err.message);
+  }
+});
+
+pictureRouter.post("/ownPictures", authenticateToken, async (req, res) => {
+  try {
+    console.log(userFromAuthenticatedRequest(req));
+    const pictures = await pictureService.findAllByAuthorId(
+      userFromAuthenticatedRequest(req).id as string
+    );
+    res.status(200).send(pictures);
   } catch (err: any) {
     res.status(500).send(err.message);
   }

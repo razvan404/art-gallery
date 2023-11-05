@@ -1,11 +1,14 @@
 import * as dotenv from "dotenv";
 import express from "express";
+import morgan from "morgan";
 import cors from "cors";
 import { uploadsRouter } from "./raw/uploads";
 import userRouter from "./models/user";
 import pictureTypeRouter from "./models/pictureType";
 import { pictureRouter } from "./models/picture/router";
 import WebSocket from "ws";
+import jwt from "jsonwebtoken";
+import { authRouter } from "./auth";
 
 dotenv.config();
 
@@ -18,10 +21,13 @@ const app = express();
 
 app.use(cors());
 app.use(express.json({ limit: "10mb" }));
+app.use(morgan("[:date[iso]] :method :url :status (:response-time ms)"));
+
 app.use("/uploads", uploadsRouter);
 app.use("/api/users", userRouter);
 app.use("/api/pictureTypes", pictureTypeRouter);
 app.use("/api/pictures", pictureRouter);
+app.use("/api/auth", authRouter);
 
 app.use("*", (_req, res) => {
   res.sendStatus(404);
