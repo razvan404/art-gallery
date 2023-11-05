@@ -2,13 +2,13 @@ import * as dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import { uploadsRouter } from "./raw/uploads";
+import WebSocket from "ws";
+
+import { uploadsRouter } from "./raw";
 import userRouter from "./models/user";
 import pictureTypeRouter from "./models/pictureType";
-import { pictureRouter } from "./models/picture/router";
-import WebSocket from "ws";
-import jwt from "jsonwebtoken";
-import { authRouter } from "./auth";
+import pictureRouter from "./models/picture";
+import authRouter from "./auth";
 
 dotenv.config();
 

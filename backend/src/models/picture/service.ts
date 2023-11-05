@@ -1,6 +1,6 @@
 import { db } from "../../utils/database";
 import { PictureToSave, type Picture, type PictureMini } from "./types";
-import uploadsService from "../../raw/uploadsService";
+import uploadsService from "../../raw/uploads/service";
 import webSockets from "../../webSockets";
 
 export default {

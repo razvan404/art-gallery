@@ -6,6 +6,7 @@ type Props = {
 };
 
 const GlobalLoading = ({ isOpen, message = "Please wait..." }: Props) => {
+  console.log(isOpen);
   return <IonLoading isOpen={isOpen} message={message} spinner="circles" />;
 };
 

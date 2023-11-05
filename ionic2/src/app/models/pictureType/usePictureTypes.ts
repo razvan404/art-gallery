@@ -3,7 +3,7 @@ import * as API from "../../api";
 import { PictureType } from "./types";
 import { logger } from "../../core/logger";
 
-const log = logger("usePictureTypes");
+const log = logger("UsePictureTypes");
 
 type PictureTypeState = {
   pictureTypes: { [id: number]: PictureType };
@@ -70,7 +70,11 @@ const usePictureTypes = () => {
     }
   }, []);
 
-  return { pictureTypes, loaded, error };
+  const setError = React.useCallback((error?: string) => {
+    dispatch({ type: PICTURE_TYPES_FAILED, payload: error });
+  }, []);
+
+  return { pictureTypes, loaded, error, setError };
 };
 
 export default usePictureTypes;

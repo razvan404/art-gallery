@@ -6,31 +6,27 @@ import {
   IonImg,
   IonInput,
   IonLabel,
-  IonLoading,
   IonSelect,
   IonSelectOption,
   IonTextarea,
 } from "@ionic/react";
 import { camera, trashBin } from "ionicons/icons";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
-import {
-  Picture,
-  PictureAPI,
-  usePictureTypes,
-  PictureToSave,
-  useAuth,
-} from "../models";
+import { Picture, PictureAPI, usePictureTypes, PictureToSave } from "../models";
+import { useAuth } from "../auth";
 import { imageUrl } from "../api";
 
 import styles from "./styles/savePicture.module.css";
 import GlobalLoading from "../extra/globalLoading";
 import GlobalError from "../extra/globalError";
+import { useHistory } from "react-router";
 
 type Props = {
   picture?: Picture;
 };
 
 const SavePicture = ({ picture }: Props) => {
+  const history = useHistory();
   const [pictureToSave, setPictureToSave] = React.useState<PictureToSave>({
     ...picture,
   });
@@ -38,11 +34,13 @@ const SavePicture = ({ picture }: Props) => {
     currentUser,
     loading: currentUserLoading,
     error: currentUserError,
+    setError: setCurrentUserError,
   } = useAuth();
   const {
     pictureTypes,
     loaded: pictureTypesLoaded,
     error: pictureTypesError,
+    setError: setPictureTypesError,
   } = usePictureTypes();
   const [error, setError] = React.useState<string>();
   const [success, setSuccess] = React.useState<string>();
@@ -114,7 +112,6 @@ const SavePicture = ({ picture }: Props) => {
 
   return (
     <>
-      <IonLoading isOpen={loading} message="Please wait..." />
       <div className={styles.container}>
         {!isNewPicture ? (
           <IonImg src={pictureUrl} alt={picture.title} />
@@ -239,13 +236,16 @@ const SavePicture = ({ picture }: Props) => {
               text: "OK",
               handler: () => {
                 setSuccess(undefined);
-                window.location.href = "/gallery";
+                history.push("/gallery");
               },
             },
           ]}
         />
-        <GlobalLoading isOpen={!pictureTypesLoaded || currentUserLoading} />
-        <GlobalError error={pictureTypesError || currentUserError} />
+        <GlobalError
+          error={pictureTypesError}
+          setError={setPictureTypesError}
+        />
+        <GlobalError error={currentUserError} setError={setCurrentUserError} />
       </div>
     </>
   );

@@ -20,14 +20,15 @@ const useParamsPicture = () => {
         return UserAPI.findById(fetchedPicture.authorId);
       })
       .then((fetchedUser) => {
-        if (!fetchedUser) return null;
-        setPicture(
-          (prevPicture) =>
-            prevPicture && {
-              ...prevPicture,
-              author: fetchedUser,
-            }
-        );
+        if (fetchedUser) {
+          setPicture(
+            (prevPicture) =>
+              prevPicture && {
+                ...prevPicture,
+                author: fetchedUser,
+              }
+          );
+        }
         setLoading(false);
       })
       .catch((error) => {
@@ -36,7 +37,7 @@ const useParamsPicture = () => {
       });
   }, [id]);
 
-  return { picture, loading, error };
+  return { picture, loading, error, setError };
 };
 
 export default useParamsPicture;

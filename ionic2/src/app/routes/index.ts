@@ -3,14 +3,15 @@ import pictureRoute, {
   createPictureRoute,
   editPictureRoute,
 } from "../picture/route";
+import loginRoute from "../login/route";
 import DefaultRoute from "./defaultRoute";
-import NotFoundRoute from "./notFoundRoute";
 import { RouteProps } from "./types";
 
 export const routes: readonly RouteProps[] = [
   galleryRoute,
+  editPictureRoute,
   pictureRoute,
   createPictureRoute,
-  editPictureRoute,
+  loginRoute,
 ] as const;
-export { DefaultRoute, NotFoundRoute };
+export { DefaultRoute };

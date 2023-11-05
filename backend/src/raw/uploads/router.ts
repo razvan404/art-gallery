@@ -1,6 +1,6 @@
 import express from "express";
 import fs from "fs";
-import uploadsService from "./uploadsService";
+import uploadsService from "./service";
 
 export const uploadsRouter = express.Router();
 

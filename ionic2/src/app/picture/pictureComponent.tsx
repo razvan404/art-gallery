@@ -1,19 +1,13 @@
 import * as React from "react";
-import {
-  IonButton,
-  IonIcon,
-  IonImg,
-  IonLabel,
-  IonLoading,
-  IonToast,
-} from "@ionic/react";
+import { IonButton, IonIcon, IonImg, IonLabel, IonToast } from "@ionic/react";
 import { cloudDownloadOutline, shareSocialOutline } from "ionicons/icons";
-import { Picture, PictureType, useAuth, usePictureTypes } from "../models";
+import { Picture, PictureType, usePictureTypes } from "../models";
 import { downloadImageUrl, imageUrl } from "../api";
 import MiniThumbnail from "../user/miniThumbnail";
 
 import styles from "./styles/pictureComponent.module.css";
 import GlobalError from "../extra/globalError";
+import GlobalLoading from "../extra/globalLoading";
 
 type Props = {
   picture: Picture;
@@ -25,6 +19,7 @@ const PictureComponent = ({ picture }: Props) => {
     pictureTypes,
     loaded: pictureTypesLoaded,
     error: pictureTypesError,
+    setError: setPictureTypesError,
   } = usePictureTypes();
   const [pictureType, setPictureType] = React.useState<PictureType>();
 
@@ -87,8 +82,7 @@ const PictureComponent = ({ picture }: Props) => {
         duration={3000}
         onDidDismiss={() => setShowToast(false)}
       />
-      <IonLoading isOpen={!pictureTypesLoaded || !picture.author} />
-      <GlobalError error={pictureTypesError} />
+      <GlobalError error={pictureTypesError} setError={setPictureTypesError} />
     </div>
   );
 };

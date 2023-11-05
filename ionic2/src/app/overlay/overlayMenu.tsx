@@ -1,3 +1,4 @@
+import * as React from "react";
 import {
   IonHeader,
   IonToolbar,
@@ -9,7 +10,27 @@ import {
 } from "@ionic/react";
 
 import styles from "./styles/overlayMenu.module.css";
-import { useAuth } from "../models";
+import { useAuth } from "../auth";
+import { Link } from "react-router-dom";
+import MiniThumbnail from "../user/miniThumbnail";
+
+const MenuLink = ({
+  to,
+  children,
+  onClick,
+}: {
+  to: string;
+  children: React.ReactNode;
+  onClick?: () => void;
+}) => {
+  return (
+    <Link className={styles.menuLink} to={to}>
+      <IonItem button onClick={onClick}>
+        {children}
+      </IonItem>
+    </Link>
+  );
+};
 
 const OverlayMenu = () => {
   const { currentUser, logout } = useAuth();
@@ -23,30 +44,29 @@ const OverlayMenu = () => {
       </IonHeader>
       <IonContent className={styles.menuContent}>
         <IonList className={styles.menuList}>
-          <IonItem button href="/gallery">
-            Gallery
-          </IonItem>
-          <IonItem button href="/about">
-            About
-          </IonItem>
-          <IonItem button href="/contact">
-            Contact
-          </IonItem>
+          <MenuLink to="/gallery">Gallery</MenuLink>
+          {currentUser && (
+            <>
+              <MenuLink to="/pictures/my">My Pictures</MenuLink>
+              <MenuLink to="/pictures/create">Upload Picture</MenuLink>
+            </>
+          )}
         </IonList>
         <IonList className={styles.menuList}>
           {currentUser ? (
             <>
-              <IonItem button href="/profile">
-                Your Profile
-              </IonItem>
-              <IonItem button onClick={logout}>
+              <MenuLink to="/profile">
+                <MiniThumbnail user={currentUser} />
+              </MenuLink>
+              <MenuLink to="/gallery" onClick={logout}>
                 Logout
-              </IonItem>
+              </MenuLink>
             </>
           ) : (
-            <IonItem button href="/login">
-              Login
-            </IonItem>
+            <>
+              <MenuLink to="/login">Login</MenuLink>
+              <MenuLink to="/register">Register</MenuLink>
+            </>
           )}
         </IonList>
       </IonContent>
@@ -54,4 +74,4 @@ const OverlayMenu = () => {
   );
 };
 
-export default OverlayMenu;
+export default React.memo(OverlayMenu);

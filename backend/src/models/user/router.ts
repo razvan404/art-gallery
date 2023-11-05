@@ -4,7 +4,7 @@ import userService from "./service";
 export const userRouter = express.Router();
 
 // GET users/
-userRouter.get("/", async (req, res) => {
+userRouter.get("/", async (_, res) => {
   try {
     const users = await userService.findAll();
     res.status(200).send(users);

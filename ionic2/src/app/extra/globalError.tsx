@@ -1,14 +1,12 @@
+import * as React from "react";
 import { IonAlert } from "@ionic/react";
-import { useHistory } from "react-router";
 
 type Props = {
   error?: string | null;
+  setError: (arg0?: string) => void;
 };
 
-const GlobalError = ({ error }: Props) => {
-  const history = useHistory();
-  console.log(error);
-
+const GlobalError = ({ error, setError }: Props) => {
   return (
     <IonAlert
       isOpen={!!error}
@@ -17,9 +15,9 @@ const GlobalError = ({ error }: Props) => {
       message={error ?? ""}
       buttons={[
         {
-          text: "Go back",
+          text: "Ok",
           handler: () => {
-            history.goBack();
+            setError();
           },
         },
       ]}

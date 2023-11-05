@@ -5,3 +5,8 @@ export type User = {
   password?: string;
   profileImage?: string;
 };
+
+export type AuthenticationResponse = {
+  token: string;
+  user: User;
+};

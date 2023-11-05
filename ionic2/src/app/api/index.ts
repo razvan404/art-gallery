@@ -1,3 +1,4 @@
+import { authConfig } from "../core/auth";
 import { logger } from "../core/logger";
 import { baseURL, webSocketURL } from "./consts";
 import { Response } from "./types";
@@ -29,17 +30,33 @@ const withLogs = <T>(
     });
 };
 
-export const get = <T>(path: string): Promise<T> =>
-  withLogs<T>(axios.get(path, { method: "GET" }), `GET - ${path}`);
+export const get = <T>(path: string, authToken?: string): Promise<T> =>
+  withLogs<T>(axios.get(path, authConfig(authToken)), `GET - ${path}`);
 
-export const post = <T>(path: string, body: any): Promise<T> =>
-  withLogs<T>(axios.post(path, body), `POST - ${path} -`, body);
+export const post = <T>(
+  path: string,
+  body: any,
+  authToken?: string
+): Promise<T> =>
+  withLogs<T>(
+    axios.post(path, body, authConfig(authToken)),
+    `POST - ${path} -`,
+    body
+  );
 
-export const put = <T>(path: string, body: any): Promise<T> =>
-  withLogs<T>(axios.put(path, body), `PUT - ${path} -`, body);
+export const put = <T>(
+  path: string,
+  body: any,
+  authToken?: string
+): Promise<T> =>
+  withLogs<T>(
+    axios.put(path, body, authConfig(authToken)),
+    `PUT - ${path} -`,
+    body
+  );
 
-export const del = <T>(path: string): Promise<T> =>
-  withLogs<T>(axios.delete(path), `DELETE - ${path}`);
+export const del = <T>(path: string, authToken?: string): Promise<T> =>
+  withLogs<T>(axios.delete(path, authConfig(authToken)), `DELETE - ${path}`);
 
 type Message<T extends any> = {
   event: string;

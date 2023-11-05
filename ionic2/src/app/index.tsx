@@ -1,7 +1,7 @@
 import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { Route, Switch } from "react-router-dom";
-import { DefaultRoute, NotFoundRoute, routes } from "./routes";
+import { Route } from "react-router-dom";
+import { DefaultRoute, routes } from "./routes";
 
 import "@ionic/react/css/core.css";
 
@@ -24,11 +24,10 @@ const App = () => (
   <IonApp>
     <IonReactRouter>
       <IonRouterOutlet>
+        <DefaultRoute />
         {routes.map((route, index) => (
           <Route key={index} {...route} />
         ))}
-        <DefaultRoute />
-        <NotFoundRoute />
       </IonRouterOutlet>
     </IonReactRouter>
   </IonApp>

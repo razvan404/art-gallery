@@ -1,7 +1,7 @@
 import fs from "fs";
-import { randomText } from "../utils/encryption";
+import { randomText } from "../../utils/encryption";
 
-const baseDir = `${__dirname}/../../uploads`;
+const baseDir = `${__dirname}/../../../uploads`;
 
 export default {
   getPath: (file: string) => {

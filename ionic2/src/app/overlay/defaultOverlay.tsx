@@ -13,8 +13,10 @@ import {
   IonInfiniteScroll,
 } from "@ionic/react";
 import OverlayMenu from "./overlayMenu";
-import { Link } from "react-router-dom";
 import { constructOutline } from "ionicons/icons";
+
+import styles from "./styles/defaultOverlay.module.css";
+import { Link } from "react-router-dom";
 
 type OverlayProps = {
   title?: string;
@@ -24,6 +26,7 @@ type OverlayProps = {
   color?: string;
   editHref?: string;
   fixedComponent?: React.ReactNode;
+  withScrolling?: boolean;
 };
 
 const DefaultOverlay = ({
@@ -34,7 +37,9 @@ const DefaultOverlay = ({
   color = "success",
   editHref,
   fixedComponent,
+  withScrolling = true,
 }: OverlayProps) => {
+  console.log("Hello!");
   return (
     <>
       <OverlayMenu />
@@ -49,9 +54,11 @@ const DefaultOverlay = ({
                 </IonButtons>
                 {editHref && (
                   <IonButtons slot="end">
-                    <IonButton href={editHref} color={"light"}>
-                      <IonIcon size={"large"} icon={constructOutline} />
-                    </IonButton>
+                    <Link to={editHref}>
+                      <IonButton color={"light"}>
+                        <IonIcon size={"large"} icon={constructOutline} />
+                      </IonButton>
+                    </Link>
                   </IonButtons>
                 )}
               </>
@@ -60,7 +67,11 @@ const DefaultOverlay = ({
           </IonToolbar>
         </IonHeader>
         <IonContent className="ion-padding">
-          <IonInfiniteScroll>{children}</IonInfiniteScroll>
+          {withScrolling ? (
+            <IonInfiniteScroll>{children}</IonInfiniteScroll>
+          ) : (
+            children
+          )}
           {fixedComponent}
         </IonContent>
       </IonPage>
