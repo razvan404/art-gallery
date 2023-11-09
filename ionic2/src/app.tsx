@@ -1,7 +1,7 @@
 import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Route } from "react-router-dom";
-import { DefaultRoute, routes } from "./routing";
+import { DefaultRoute, PrivateRoute, routes } from "./routing";
 
 import "@ionic/react/css/core.css";
 
@@ -17,7 +17,6 @@ import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 
 import "./theme/variables.css";
-import { PrivateRoute } from "./routing/privateRoute";
 
 setupIonicReact();
 

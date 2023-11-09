@@ -2,15 +2,26 @@ import express from "express";
 import pictureService from "./service";
 import { authenticateToken, userFromAuthenticatedRequest } from "../../auth";
 import { queryParamsToDict } from "../../utils/linkOps";
+import { PictureMini } from "./types";
 
 export const pictureRouter = express.Router();
 
 // GET pictures/
 pictureRouter.get("/", async (req, res) => {
   try {
-    const pictures = await pictureService.findAll(
-      queryParamsToDict(req.query as any)
-    );
+    const { skip, take, ...filterAttributes } = req.query;
+    let pictures: PictureMini[];
+    if (skip && take) {
+      pictures = await pictureService.findAll(
+        queryParamsToDict(filterAttributes as any),
+        parseInt(skip as string),
+        parseInt(take as string)
+      );
+    } else {
+      pictures = await pictureService.findAll(
+        queryParamsToDict(filterAttributes as any)
+      );
+    }
     res.status(200).send(pictures);
   } catch (err: any) {
     res.status(500).send(err.message);

@@ -4,15 +4,21 @@ import uploadsService from "../../raw/uploads/service";
 import webSockets from "../../webSockets";
 
 export default {
-  findAll: async (params: any): Promise<PictureMini[]> => {
+  findAll: async (
+    queryFilters: any,
+    skip?: number,
+    take?: number
+  ): Promise<PictureMini[]> => {
     return await db.picture.findMany({
-      where: { ...params },
+      where: { ...queryFilters },
       select: {
         id: true,
         title: true,
         image: true,
         author: { select: { username: true, profileImage: true } },
       },
+      skip: skip,
+      take: take,
     });
   },
   findAllByAuthorId: async (authorId: string): Promise<PictureMini[]> => {

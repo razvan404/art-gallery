@@ -3,7 +3,7 @@ import { Redirect, Route } from "react-router-dom";
 import { useAuth } from "../auth";
 import { RouteProps } from "./types";
 
-export const PrivateRoute = ({ component, ...rest }: RouteProps) => {
+const PrivateRoute = ({ component, ...rest }: RouteProps) => {
   const { currentUser } = useAuth();
   const [shouldRedirect, setShouldRedirect] = React.useState<boolean>(false);
   setTimeout(() => {
@@ -15,3 +15,5 @@ export const PrivateRoute = ({ component, ...rest }: RouteProps) => {
     </Route>
   );
 };
+
+export default PrivateRoute;

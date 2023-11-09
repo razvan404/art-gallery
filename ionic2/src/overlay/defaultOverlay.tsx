@@ -66,12 +66,8 @@ const DefaultOverlay = ({
           </IonToolbar>
         </IonHeader>
         <IonContent className="ion-padding">
-          {withScrolling ? (
-            <IonInfiniteScroll>{children}</IonInfiniteScroll>
-          ) : (
-            children
-          )}
-          {fixedComponent}
+          {children}
+          {withScrolling && <IonInfiniteScroll></IonInfiniteScroll>}
         </IonContent>
       </IonPage>
     </>
