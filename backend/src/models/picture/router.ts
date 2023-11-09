@@ -1,13 +1,16 @@
 import express from "express";
 import pictureService from "./service";
 import { authenticateToken, userFromAuthenticatedRequest } from "../../auth";
+import { queryParamsToDict } from "../../utils/linkOps";
 
 export const pictureRouter = express.Router();
 
 // GET pictures/
-pictureRouter.get("/", async (_, res) => {
+pictureRouter.get("/", async (req, res) => {
   try {
-    const pictures = await pictureService.findAll();
+    const pictures = await pictureService.findAll(
+      queryParamsToDict(req.query as any)
+    );
     res.status(200).send(pictures);
   } catch (err: any) {
     res.status(500).send(err.message);
