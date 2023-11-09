@@ -17,6 +17,7 @@ export default {
         image: true,
         author: { select: { username: true, profileImage: true } },
       },
+      orderBy: { createdAt: "asc" },
       skip: skip,
       take: take,
     });

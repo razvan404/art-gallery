@@ -1,5 +1,4 @@
-import usePictures from "../models/picture/usePictures";
-import { IonList, IonFabButton, IonIcon, IonFab } from "@ionic/react";
+import { IonList } from "@ionic/react";
 import PicturePreview from "./picturePreview";
 
 import styles from "./styles/pictureList.module.css";

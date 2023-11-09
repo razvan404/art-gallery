@@ -11,11 +11,11 @@ import {
   IonButton,
   IonIcon,
   IonInfiniteScroll,
+  IonInfiniteScrollContent,
 } from "@ionic/react";
 import OverlayMenu from "./overlayMenu";
 import { constructOutline } from "ionicons/icons";
 
-import styles from "./styles/defaultOverlay.module.css";
 import { Link } from "react-router-dom";
 
 type OverlayProps = {
@@ -27,6 +27,7 @@ type OverlayProps = {
   editHref?: string;
   fixedComponent?: React.ReactNode;
   withScrolling?: boolean;
+  onScroll?: (ev: CustomEvent<void>) => void;
 };
 
 const DefaultOverlay = ({
@@ -38,6 +39,7 @@ const DefaultOverlay = ({
   editHref,
   fixedComponent,
   withScrolling = true,
+  onScroll,
 }: OverlayProps) => {
   return (
     <>
@@ -67,7 +69,16 @@ const DefaultOverlay = ({
         </IonHeader>
         <IonContent className="ion-padding">
           {children}
-          {withScrolling && <IonInfiniteScroll></IonInfiniteScroll>}
+          {withScrolling && (
+            <IonInfiniteScroll
+              threshold="100px"
+              disabled={!onScroll}
+              onIonInfinite={onScroll}
+            >
+              <IonInfiniteScrollContent loadingText={"Loading more..."} />
+            </IonInfiniteScroll>
+          )}
+          {fixedComponent}
         </IonContent>
       </IonPage>
     </>

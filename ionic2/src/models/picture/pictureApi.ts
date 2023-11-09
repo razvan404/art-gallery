@@ -13,12 +13,24 @@ const fixPicture = (picture: any): Picture => {
   };
 };
 
+const filtersToQueryString = (filters?: { [key: string]: any }) => {
+  if (!filters) {
+    return "";
+  }
+  return Object.entries(filters)
+    .map(([key, value]) => `${key}=${value}`)
+    .join("&");
+};
+
 export default {
-  findAll: async () => {
+  findAll: async (filters?: { [key: string]: any }) => {
     try {
       log("findAll - started");
-      const pictures = await API.get<Picture[]>(resourceUrl);
-      pictures;
+      const queryString = filtersToQueryString(filters);
+      const pictures = await API.get<Picture[]>(
+        `${resourceUrl}${queryString && "?" + queryString}`
+      );
+
       log("findAll - succeeded");
       return pictures.map(fixPicture);
     } catch (err: any) {
