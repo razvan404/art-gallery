@@ -1,5 +1,4 @@
 import * as API from "../../api";
-import { globalToken } from "../../auth";
 import { Picture, PictureToSave } from "./types";
 import { logger } from "../../core/logger";
 
@@ -62,14 +61,17 @@ export default {
       throw err;
     }
   },
-  save: async (picture: PictureToSave) => {
+  save: async (picture: PictureToSave, token?: string) => {
     try {
       log("savePicture - started");
+      if (!token) {
+        throw new Error("No token");
+      }
       if (!picture.id) {
         const addedPicture = await API.post<Picture>(
           resourceUrl,
           picture,
-          globalToken
+          token
         );
         log("savePicture - succeeded");
         return fixPicture(addedPicture);
@@ -77,7 +79,7 @@ export default {
         const updatedPicture = await API.put<Picture>(
           `${resourceUrl}/${picture.id}`,
           picture,
-          globalToken
+          token
         );
         log("savePicture - succeeded");
         return fixPicture(updatedPicture);

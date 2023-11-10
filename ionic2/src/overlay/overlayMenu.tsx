@@ -8,11 +8,12 @@ import {
   IonList,
   IonItem,
 } from "@ionic/react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../auth";
+import MiniThumbnail from "../user/miniThumbnail";
+import { useNetwork } from "../core/useNetwork";
 
 import styles from "./styles/overlayMenu.module.css";
-import { useAuth } from "../auth";
-import { Link } from "react-router-dom";
-import MiniThumbnail from "../user/miniThumbnail";
 
 const MenuLink = ({
   to,
@@ -34,6 +35,7 @@ const MenuLink = ({
 
 const OverlayMenu = () => {
   const { currentUser, logout } = useAuth();
+  const { networkStatus } = useNetwork();
 
   return (
     <IonMenu contentId="main-content">
@@ -68,6 +70,9 @@ const OverlayMenu = () => {
               <MenuLink to="/register">Register</MenuLink>
             </>
           )}
+          <IonItem>
+            Internet status: {networkStatus.connected ? "Online" : "Offline"}
+          </IonItem>
         </IonList>
       </IonContent>
     </IonMenu>

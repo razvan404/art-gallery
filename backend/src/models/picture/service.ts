@@ -1,7 +1,7 @@
 import { db } from "../../utils/database";
 import { PictureToSave, type Picture, type PictureMini } from "./types";
 import uploadsService from "../../raw/uploads/service";
-import webSockets from "../../webSockets";
+import * as webSockets from "../../webSockets";
 
 export default {
   findAll: async (
@@ -22,17 +22,6 @@ export default {
       take: take,
     });
   },
-  findAllByAuthorId: async (authorId: string): Promise<PictureMini[]> => {
-    return await db.picture.findMany({
-      where: { authorId },
-      select: {
-        id: true,
-        title: true,
-        image: true,
-        author: { select: { username: true, profileImage: true } },
-      },
-    });
-  },
   findById: async (id: string): Promise<Picture | null> => {
     return await db.picture.findUnique({
       where: { id },
@@ -47,7 +36,7 @@ export default {
       },
     });
   },
-  create: async (picture: PictureToSave): Promise<Picture> => {
+  create: async (picture: PictureToSave): Promise<PictureMini> => {
     const image = await uploadsService.save(
       picture.rawImage.dataUrl,
       uploadsService.generatePath(picture.rawImage.format)
@@ -62,21 +51,18 @@ export default {
       },
       select: {
         id: true,
-        createdAt: true,
         title: true,
-        description: true,
         image: true,
-        authorId: true,
-        typeId: true,
+        author: { select: { username: true, profileImage: true } },
       },
     });
     if (savedPicture) {
-      webSockets.sendToAll("PICTURE_SAVED", savedPicture);
+      webSockets.sendToUser(picture.authorId, "PICTURE_SAVED", savedPicture);
     }
     return savedPicture;
   },
-  update: async (picture: Picture): Promise<Picture> => {
-    return await db.picture.update({
+  update: async (picture: Picture): Promise<PictureMini> => {
+    const updatedPicture = await db.picture.update({
       where: { id: picture.id },
       data: {
         title: picture.title,
@@ -86,14 +72,19 @@ export default {
       },
       select: {
         id: true,
-        createdAt: true,
         title: true,
-        description: true,
         image: true,
-        authorId: true,
-        typeId: true,
+        author: { select: { username: true, profileImage: true } },
       },
     });
+    if (updatedPicture) {
+      webSockets.sendToUser(
+        picture.authorId,
+        "PICTURE_UPDATED",
+        updatedPicture
+      );
+    }
+    return updatedPicture;
   },
   delete: async (id: string, userId: string): Promise<void> => {
     const picture = await db.picture.findUnique({
@@ -104,6 +95,6 @@ export default {
       throw new Error("You can only delete your own pictures");
     }
     await db.picture.delete({ where: { id } });
-    webSockets.sendToAll("PICTURE_DELETED", id);
+    webSockets.sendToUser(userId, "PICTURE_DELETED", { id: id });
   },
 };

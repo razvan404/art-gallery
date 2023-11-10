@@ -1,6 +1,6 @@
 import * as React from "react";
 import PictureAPI from "./pictureApi";
-import { Picture } from "./types";
+import { Picture, PictureToSave } from "./types";
 import { logger } from "../../core/logger";
 import { newWebSocket } from "../../api";
 import { useAuth } from "../../auth";
@@ -27,6 +27,9 @@ type ActionPicture = {
 const PICTURES_LOADING = "PICTURES_LOADING";
 const PICTURES_FAILED = "PICTURES_FAILED";
 const PICTURES_SUCCEEDED = "PICTURES_SUCCEEDED";
+const PICTURES_SAVED = "PICTURES_SAVED";
+const PICTURES_UPDATED = "PICTURES_UPDATED";
+const PICTURES_DELETED = "PICTURES_DELETED";
 
 const pictureReducer = (
   state: PictureState = initialState,
@@ -39,19 +42,39 @@ const pictureReducer = (
       return { ...state, loading: false, error: action.payload };
     case PICTURES_SUCCEEDED:
       return { ...state, loading: false, pictures: action.payload };
+    case PICTURES_SAVED:
+      return {
+        ...state,
+        loading: false,
+        pictures: [...state.pictures, action.payload],
+      };
+    case PICTURES_UPDATED:
+      return {
+        ...state,
+        loading: false,
+        pictures: state.pictures.map((p) =>
+          p.id === action.payload.id ? action.payload : p
+        ),
+      };
+    case PICTURES_DELETED:
+      return {
+        ...state,
+        loading: false,
+        pictures: state.pictures.filter((p) => p.id !== action.payload.id),
+      };
     default:
       return state;
   }
 };
 
 const usePictures = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, token } = useAuth();
   const [state, dispatch] = React.useReducer(pictureReducer, initialState);
   const { pictures, loading, error } = state;
 
   React.useEffect(() => {
     wsEffect();
-  }, []);
+  }, [token]);
 
   React.useEffect(() => {
     findPictures();
@@ -72,25 +95,18 @@ const usePictures = () => {
   }, [currentUser]);
 
   const savePicture = React.useCallback(
-    async (picture: Picture) => {
+    async (picture: PictureToSave) => {
       try {
+        console.log(token);
         dispatch({ type: PICTURES_LOADING });
         log("savePicture - started");
-        const isNewPicture = !picture.id;
-        const fetchedPicture = await PictureAPI.save(picture);
-        if (isNewPicture) {
-          dispatch({
-            type: PICTURES_SUCCEEDED,
-            payload: [...pictures, fetchedPicture],
-          });
-        } else {
-          dispatch({
-            type: PICTURES_SUCCEEDED,
-            payload: pictures.map((p) =>
-              p.id === fetchedPicture.id ? fetchedPicture : p
-            ),
-          });
-        }
+        await PictureAPI.save(
+          {
+            ...picture,
+            authorId: currentUser?.id,
+          },
+          token
+        );
       } catch (err: any) {
         dispatch({ type: PICTURES_FAILED, payload: err.message });
         log("savePicture - failed -", err.message);
@@ -99,17 +115,23 @@ const usePictures = () => {
     [pictures]
   );
 
-  const wsEffect = () => {
+  const wsEffect = React.useCallback(() => {
     let canceled = false;
     log("wsEffect - connecting");
     const closeWebSocket = newWebSocket<Picture>((message) => {
+      if (canceled) {
+        return;
+      }
       const { event, payload } = message;
       log("wsEffect - pictures -", event);
-      if (event == "PICTURE_SAVED") {
-        dispatch({ type: PICTURES_SUCCEEDED, payload: [...pictures, payload] });
-      }
-    });
-  };
+      dispatch({ type: event, payload });
+    }, token);
+    return () => {
+      log("wsEffect - disconnecting");
+      canceled = true;
+      closeWebSocket?.();
+    };
+  }, [token]);
 
   return {
     pictures,

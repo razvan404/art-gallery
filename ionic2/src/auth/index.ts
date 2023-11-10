@@ -1,4 +1,4 @@
-import useAuth, { globalToken } from "./useAuth";
+import useAuth from "./useAuth";
 import authApi from "./authApi";
 
-export { useAuth, authApi, globalToken };
+export { useAuth, authApi };

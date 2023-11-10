@@ -76,15 +76,3 @@ pictureRouter.delete("/:id", authenticateToken, async (req, res) => {
     res.status(500).send(err.message);
   }
 });
-
-pictureRouter.post("/ownPictures", authenticateToken, async (req, res) => {
-  try {
-    console.log(userFromAuthenticatedRequest(req));
-    const pictures = await pictureService.findAllByAuthorId(
-      userFromAuthenticatedRequest(req).id as string
-    );
-    res.status(200).send(pictures);
-  } catch (err: any) {
-    res.status(500).send(err.message);
-  }
-});

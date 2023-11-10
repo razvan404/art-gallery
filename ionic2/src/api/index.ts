@@ -63,10 +63,16 @@ type Message<T extends any> = {
   payload: T;
 };
 
-export const newWebSocket = <T>(onMessage: (data: Message<T>) => void) => {
+export const newWebSocket = <T>(
+  onMessage: (data: Message<T>) => void,
+  token?: string
+) => {
   const ws = new WebSocket(`${webSocketURL}`);
   ws.onopen = () => {
     log("web socket - on open");
+    if (token) {
+      ws.send(JSON.stringify({ type: "authorization", payload: { token } }));
+    }
   };
   ws.onclose = () => {
     log("web socket - on close");

@@ -5,7 +5,6 @@ import { User } from "../models/user/types";
 import { logger } from "../core/logger";
 
 const log = logger("UseAuth");
-export let globalToken: string | undefined;
 
 type UserState = {
   currentUser?: User;
@@ -48,7 +47,6 @@ const userReducer = (
         currentUser: action.payload,
       };
     case USER_LOGIN:
-      globalToken = action.payload.token;
       return {
         ...state,
         loading: false,
@@ -56,7 +54,6 @@ const userReducer = (
         token: action.payload.token,
       };
     case USER_REGISTER:
-      globalToken = action.payload.token;
       return {
         ...state,
         loading: false,
@@ -64,7 +61,6 @@ const userReducer = (
         token: action.payload.token,
       };
     case USER_LOGOUT:
-      globalToken = undefined;
       return {
         ...state,
         loading: false,

@@ -13,7 +13,12 @@ import {
 import { camera, trashBin } from "ionicons/icons";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 import { useHistory } from "react-router";
-import { Picture, PictureAPI, usePictureTypes, PictureToSave } from "../models";
+import {
+  Picture,
+  usePictureTypes,
+  PictureToSave,
+  usePictures,
+} from "../models";
 import { useAuth } from "../auth";
 import { imageUrl } from "../api";
 import GlobalError from "../extra/globalError";
@@ -26,25 +31,22 @@ type Props = {
 
 const SavePicture = ({ picture }: Props) => {
   const history = useHistory();
+  const { savePicture } = usePictures();
   const [pictureToSave, setPictureToSave] = React.useState<PictureToSave>({
     ...picture,
   });
   const {
     currentUser,
-    loading: currentUserLoading,
     error: currentUserError,
     setError: setCurrentUserError,
   } = useAuth();
   const {
     pictureTypes,
-    loaded: pictureTypesLoaded,
     error: pictureTypesError,
     setError: setPictureTypesError,
   } = usePictureTypes();
   const [error, setError] = React.useState<string>();
   const [success, setSuccess] = React.useState<string>();
-  const [loading, setLoading] = React.useState(false);
-
   React.useEffect(() => {
     setPictureToSave({
       ...picture,
@@ -93,18 +95,17 @@ const SavePicture = ({ picture }: Props) => {
     return errors.length === 0;
   }, [pictureToSave, isNewPicture]);
 
-  const savePicture = React.useCallback(async () => {
+  const saveGivenPicture = React.useCallback(async () => {
     if (!validatePicture()) {
       return;
     }
-    setLoading(true);
-    try {
-      await PictureAPI.save(pictureToSave);
-      setSuccess("Picture saved successfully");
-    } catch (err: any) {
-      setError(err.message);
-    }
-    setLoading(false);
+    savePicture(pictureToSave)
+      .then(() => {
+        setSuccess("Picture saved successfully");
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
   }, [pictureToSave, validatePicture]);
 
   const pictureUrl = picture?.image && imageUrl(picture?.image);
@@ -213,7 +214,7 @@ const SavePicture = ({ picture }: Props) => {
         <IonButton
           className={styles.button}
           color="warning"
-          onClick={savePicture}
+          onClick={saveGivenPicture}
         >
           <IonLabel>
             {isNewPicture ? "Upload picture" : "Save changes"}

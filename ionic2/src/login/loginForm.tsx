@@ -23,6 +23,7 @@ const LoginForm = () => {
         className={styles.container}
         onSubmit={(ev) => {
           ev.preventDefault();
+          console.log(usernameOrEmail, password);
           login(usernameOrEmail, password);
         }}
       >
@@ -33,7 +34,7 @@ const LoginForm = () => {
           fill="outline"
           labelPlacement="floating"
           value={usernameOrEmail}
-          onIonChange={(e) => setUsernameOrEmail(e.detail.value!)}
+          onIonInput={(e) => setUsernameOrEmail(e.detail.value!)}
         />
         <IonInput
           className={styles.input}
@@ -42,7 +43,7 @@ const LoginForm = () => {
           fill="outline"
           labelPlacement="floating"
           value={password}
-          onIonChange={(e) => setPassword(e.detail.value!)}
+          onIonInput={(e) => setPassword(e.detail.value!)}
         />
         <IonButton className={styles.button} type="submit">
           Login
