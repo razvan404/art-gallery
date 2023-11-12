@@ -5,5 +5,4 @@ export default {
   path: "/pictures",
   exact: true,
   component: UserPicturesPage,
-  isPrivate: true,
 } as RouteProps;

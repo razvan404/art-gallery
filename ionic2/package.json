@@ -1,5 +1,5 @@
 {
-  "name": "ionic2",
+  "name": "art-gallery",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -28,6 +28,7 @@
     "react-dom": "^18.2.0",
     "react-router": "^5.3.4",
     "react-router-dom": "^5.3.4",
+    "recoil": "^0.7.7",
     "sass": "^1.69.4"
   },
   "devDependencies": {

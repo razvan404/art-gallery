@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as Recoil from "recoil";
 import * as API from "../../api";
 import { PictureType } from "./types";
 import { logger } from "../../core/logger";
@@ -8,70 +9,52 @@ const log = logger("UsePictureTypes");
 type PictureTypeState = {
   pictureTypes: { [id: number]: PictureType };
   loaded: boolean;
-  error: string;
+  error?: string;
 };
 
 const initialState: PictureTypeState = {
   pictureTypes: {},
   loaded: false,
-  error: "",
 };
 
-type ActionPictureType = {
-  type: string;
-  payload?: any;
-};
-
-const PICTURE_TYPES_LOADING = "PICTURE_TYPES_LOADING";
-const PICTURE_TYPES_FAILED = "PICTURE_TYPES_FAILED";
-const PICTURE_TYPES_SUCCEEDED = "PICTURE_TYPES_SUCCEEDED";
-
-const pictureTypeReducer = (
-  state: PictureTypeState = initialState,
-  action: ActionPictureType
-): PictureTypeState => {
-  switch (action.type) {
-    case PICTURE_TYPES_LOADING:
-      return { ...state, loaded: false, error: "" };
-    case PICTURE_TYPES_FAILED:
-      return { ...state, loaded: true, error: action.payload };
-    case PICTURE_TYPES_SUCCEEDED:
-      return {
-        ...state,
-        loaded: true,
-        pictureTypes: Object.fromEntries(
-          action.payload?.map((type: PictureType) => [type.id, type])
-        ),
-      };
-    default:
-      return state;
-  }
-};
+const pictureTypeStateAtom = Recoil.atom<PictureTypeState>({
+  key: "pictureTypeState",
+  default: initialState,
+});
 
 const usePictureTypes = () => {
-  const [state, dispatch] = React.useReducer(pictureTypeReducer, initialState);
+  const [state, setState] = Recoil.useRecoilState(pictureTypeStateAtom);
   const { pictureTypes, loaded, error } = state;
   const resourceURL = API.resourceURL("pictureTypes");
-
-  React.useEffect(() => {
-    getPictureTypes();
-  }, []);
 
   const getPictureTypes = React.useCallback(async () => {
     try {
       log("getPictureTypes started");
-      dispatch({ type: PICTURE_TYPES_LOADING });
+      setState((prev) => ({ ...prev, loaded: false }));
       const pictureTypes = await API.get<PictureType[]>(resourceURL);
-      dispatch({ type: PICTURE_TYPES_SUCCEEDED, payload: pictureTypes });
+      setState((prev) => ({
+        ...prev,
+        pictureTypes: Object.fromEntries(
+          pictureTypes.map((type: PictureType) => [type.id, type])
+        ),
+        loaded: true,
+        error: undefined,
+      }));
       log("getPictureTypes succeeded");
     } catch (err: any) {
-      dispatch({ type: PICTURE_TYPES_FAILED, payload: err.message });
+      setState((prev) => ({ ...prev, error: err.message, loaded: true }));
       log("getPictureTypes failed -", err.message);
     }
   }, []);
 
+  React.useEffect(() => {
+    if (Object.keys(pictureTypes).length === 0) {
+      getPictureTypes();
+    }
+  }, [pictureTypes]);
+
   const setError = React.useCallback((error?: string) => {
-    dispatch({ type: PICTURE_TYPES_FAILED, payload: error });
+    setState((prev) => ({ ...prev, error }));
   }, []);
 
   return { pictureTypes, loaded, error, setError };

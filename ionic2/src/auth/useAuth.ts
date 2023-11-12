@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as Recoil from "recoil";
 import UserAPI from "../models/user/userApi";
 import AuthAPI from "./authApi";
 import { User } from "../models/user/types";
@@ -6,107 +7,40 @@ import { logger } from "../core/logger";
 
 const log = logger("UseAuth");
 
-type UserState = {
+type AuthState = {
   currentUser?: User;
   token?: string;
   loading: boolean;
-  error: string;
+  error?: string;
 };
 
-const initialState: UserState = {
-  currentUser: undefined,
+const initialState: AuthState = {
+  token: localStorage.getItem("authToken") ?? undefined,
   loading: false,
-  error: "",
 };
 
-type ActionUser = {
-  type: string;
-  payload?: any;
-};
-
-const USER_LOADING = "USER_LOADING";
-const USER_FAILED = "USER_FAILED";
-const USER_SUCCEEDED = "USER_SUCCEEDED";
-const USER_LOGIN = "USER_LOGIN";
-const USER_REGISTER = "USER_REGISTER";
-const USER_LOGOUT = "USER_LOGOUT";
-
-const userReducer = (
-  state: UserState = initialState,
-  action: ActionUser
-): UserState => {
-  switch (action.type) {
-    case USER_LOADING:
-      return { ...state, loading: true, error: "" };
-    case USER_FAILED:
-      return { ...state, loading: false, error: action.payload };
-    case USER_SUCCEEDED:
-      return {
-        ...state,
-        loading: false,
-        currentUser: action.payload,
-      };
-    case USER_LOGIN:
-      return {
-        ...state,
-        loading: false,
-        currentUser: action.payload.user,
-        token: action.payload.token,
-      };
-    case USER_REGISTER:
-      return {
-        ...state,
-        loading: false,
-        currentUser: action.payload.user,
-        token: action.payload.token,
-      };
-    case USER_LOGOUT:
-      return {
-        ...state,
-        loading: false,
-        currentUser: undefined,
-        token: undefined,
-      };
-    default:
-      return state;
-  }
-};
+const authStateAtom = Recoil.atom<AuthState>({
+  key: "authState",
+  default: initialState,
+});
 
 const useAuth = () => {
-  const [state, dispatch] = React.useReducer(userReducer, initialState);
+  const [state, setState] = Recoil.useRecoilState(authStateAtom);
   const { currentUser, token, loading, error } = state;
 
-  React.useEffect(() => {
-    log("currentUser -", currentUser);
-  }, [currentUser]);
-
-  const saveUser = React.useCallback(async (user: User) => {
-    try {
-      dispatch({ type: USER_LOADING });
-      log("saveUser - started");
-      user = await UserAPI.save(user);
-      dispatch({ type: USER_SUCCEEDED, payload: user });
-      log("saveUser - succeeded");
-    } catch (err: any) {
-      dispatch({ type: USER_FAILED, payload: err.message });
-      log("saveUser - failed -", err.message);
-    }
-  }, []);
-
   const deleteUser = React.useCallback(async () => {
-    dispatch({ type: USER_LOADING });
     log("deleteUser - started");
     if (!currentUser?.id) {
-      dispatch({ type: USER_FAILED, payload: "No user to delete" });
       log("deleteUser - failed - No user to delete");
       return;
     }
     try {
+      setState((prev) => ({ ...prev, loading: true }));
       await UserAPI.delete(currentUser.id);
-      dispatch({ type: USER_SUCCEEDED });
+      setState({ currentUser: undefined, token: undefined, loading: false });
       log("deleteUser - succeeded");
     } catch (err: any) {
-      dispatch({ type: USER_FAILED, payload: err.message });
+      setState((prev) => ({ ...prev, loading: false, error: err.message }));
       log("deleteUser - failed -", err.message);
     }
   }, []);
@@ -114,12 +48,13 @@ const useAuth = () => {
   const login = React.useCallback(
     async (usernameOrEmail: string, password: string) => {
       try {
+        setState((prev) => ({ ...prev, loading: true }));
         const resp = await AuthAPI.login(usernameOrEmail, password);
         localStorage.setItem("authToken", resp.token);
-        dispatch({ type: USER_LOGIN, payload: resp });
+        setState({ currentUser: resp.user, token: resp.token, loading: false });
         log("login - succeeded");
       } catch (err: any) {
-        dispatch({ type: USER_FAILED, payload: err.message });
+        setState((prev) => ({ ...prev, loading: false, error: err.message }));
         log("login - failed -", err.message);
       }
     },
@@ -129,12 +64,13 @@ const useAuth = () => {
   const register = React.useCallback(
     async (username: string, email: string, password: string) => {
       try {
+        setState((prev) => ({ ...prev, loading: true }));
         const resp = await AuthAPI.register(username, email, password);
         localStorage.setItem("authToken", resp.token);
-        dispatch({ type: USER_REGISTER, payload: resp });
+        setState({ currentUser: resp.user, token: resp.token, loading: false });
         log("register - succeeded");
       } catch (err: any) {
-        dispatch({ type: USER_FAILED, payload: err.message });
+        setState((prev) => ({ ...prev, loading: false, error: err.message }));
         log("register - failed -", err.message);
       }
     },
@@ -142,32 +78,35 @@ const useAuth = () => {
   );
 
   const logout = React.useCallback(async () => {
+    setState({ currentUser: undefined, token: undefined, loading: false });
     localStorage.removeItem("authToken");
-    dispatch({ type: USER_LOGOUT });
   }, []);
 
   const me = React.useCallback(async () => {
-    const token = localStorage.getItem("authToken");
-    if (token) {
+    if (token && !currentUser) {
       log("useEffect - token found");
+
       AuthAPI.me(token)
-        .then((resp) => {
-          dispatch({ type: USER_LOGIN, payload: { user: resp, token } });
+        .then((user) => {
+          setState({ ...state, currentUser: user, loading: false });
           log("useEffect - token found - succeeded");
         })
         .catch((err) => {
-          dispatch({ type: USER_FAILED, payload: err.message });
+          setState({
+            token: undefined,
+            loading: false,
+          });
           log("useEffect - token found - failed -", err.message);
         });
     }
-  }, []);
+  }, [token]);
 
   React.useEffect(() => {
     me();
   }, []);
 
   const setError = React.useCallback((error?: string) => {
-    dispatch({ type: USER_FAILED, payload: error });
+    setState((prev) => ({ ...prev, error }));
   }, []);
 
   return {
@@ -176,7 +115,6 @@ const useAuth = () => {
     loading,
     error,
     setError,
-    saveUser,
     deleteUser,
     login,
     register,

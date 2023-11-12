@@ -12,6 +12,14 @@ export const createToken = (user: User) => {
   );
 };
 
+export const userFromJWT = (token: string): User => {
+  const { iat, exp, ...userResponse } = jwt.verify(
+    token,
+    process.env.JWT_SECRET as string
+  ) as any;
+  return userResponse;
+};
+
 export const authenticateToken = (
   req: Request,
   res: Response,
@@ -33,13 +41,5 @@ export const authenticateToken = (
 
 export const userFromAuthenticatedRequest = (req: Request): User => {
   const { iat, exp, ...userResponse } = (req as any).user;
-  return userResponse;
-};
-
-export const userFromJWT = (token: string): User => {
-  const { iat, exp, ...userResponse } = jwt.verify(
-    token,
-    process.env.JWT_SECRET as string
-  ) as any;
   return userResponse;
 };

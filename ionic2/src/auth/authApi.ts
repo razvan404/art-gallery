@@ -1,5 +1,5 @@
 import * as API from "../api";
-import { AuthenticationResponse } from "../models/user/types";
+import { AuthenticationResponse, User } from "../models/user/types";
 import { logger } from "../core/logger";
 
 const log = logger("AuthAPI");
@@ -44,10 +44,7 @@ export default {
   me: async (token: string) => {
     try {
       log("me - started");
-      const response = await API.get<AuthenticationResponse>(
-        `${resourceURL}/me`,
-        token
-      );
+      const response = await API.get<User>(`${resourceURL}/me`, token);
       log("me - succeeded");
       return response;
     } catch (err: any) {

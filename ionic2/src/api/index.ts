@@ -58,6 +58,28 @@ export const put = <T>(
 export const del = <T>(path: string, authToken?: string): Promise<T> =>
   withLogs<T>(axios.delete(path, authConfig(authToken)), `DELETE - ${path}`);
 
+export type APIRequest = {
+  type: "GET" | "POST" | "PUT" | "DELETE";
+  resource: string;
+  payload?: any;
+};
+
+export const sendRequest = <T>(
+  request: APIRequest,
+  authToken?: string
+): Promise<T> => {
+  switch (request.type) {
+    case "GET":
+      return get(resourceURL(request.resource), authToken);
+    case "POST":
+      return post(resourceURL(request.resource), request.payload, authToken);
+    case "PUT":
+      return put(resourceURL(request.resource), request.payload, authToken);
+    case "DELETE":
+      return del(resourceURL(request.resource), authToken);
+  }
+};
+
 type Message<T extends any> = {
   event: string;
   payload: T;

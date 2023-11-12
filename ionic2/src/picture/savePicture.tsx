@@ -13,17 +13,13 @@ import {
 import { camera, trashBin } from "ionicons/icons";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 import { useHistory } from "react-router";
-import {
-  Picture,
-  usePictureTypes,
-  PictureToSave,
-  usePictures,
-} from "../models";
+import { Picture, usePictureTypes, PictureToSave } from "../models";
 import { useAuth } from "../auth";
 import { imageUrl } from "../api";
 import GlobalError from "../extra/globalError";
 
 import styles from "./styles/savePicture.module.css";
+import useOptimisticPictures from "../models/picture/useOptimisticPictures";
 
 type Props = {
   picture?: Picture;
@@ -31,7 +27,7 @@ type Props = {
 
 const SavePicture = ({ picture }: Props) => {
   const history = useHistory();
-  const { savePicture } = usePictures();
+  const { saveOptimisticPicture } = useOptimisticPictures();
   const [pictureToSave, setPictureToSave] = React.useState<PictureToSave>({
     ...picture,
   });
@@ -99,9 +95,19 @@ const SavePicture = ({ picture }: Props) => {
     if (!validatePicture()) {
       return;
     }
-    savePicture(pictureToSave)
-      .then(() => {
-        setSuccess("Picture saved successfully");
+    saveOptimisticPicture(pictureToSave)
+      .then((isPending) => {
+        if (isPending) {
+          setSuccess(
+            "You don't have an internet connection, but the picture will be updated when you do"
+          );
+        } else {
+          setSuccess(
+            `The picture has been ${
+              isNewPicture ? "uploaded" : "updated"
+            } successfully`
+          );
+        }
       })
       .catch((err) => {
         setError(err.message);
@@ -232,15 +238,13 @@ const SavePicture = ({ picture }: Props) => {
         <IonAlert
           isOpen={!!success}
           header="Success"
-          message={`The picture has been ${
-            isNewPicture ? "uploaded" : "updated"
-          } successfully`}
+          message={success}
           buttons={[
             {
               text: "OK",
               handler: () => {
                 setSuccess(undefined);
-                history.push("/gallery");
+                history.push("/pictures");
               },
             },
           ]}

@@ -17,6 +17,7 @@ const filtersToQueryString = (filters?: { [key: string]: any }) => {
     return "";
   }
   return Object.entries(filters)
+    .filter(([_, value]) => value !== undefined && value !== "")
     .map(([key, value]) => `${key}=${value}`)
     .join("&");
 };

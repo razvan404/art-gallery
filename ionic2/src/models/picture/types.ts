@@ -23,3 +23,7 @@ export type Picture = {
   type?: PictureType;
   typeId?: number;
 };
+
+export type OptimisticPicture = (Picture | PictureToSave) & {
+  isPending?: boolean;
+};

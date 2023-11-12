@@ -17,13 +17,22 @@ import styles from "./styles/overlayMenu.module.css";
 
 const MenuLink = ({
   to,
+  hardLink,
   children,
   onClick,
 }: {
   to: string;
+  hardLink?: boolean;
   children: React.ReactNode;
   onClick?: () => void;
 }) => {
+  if (hardLink) {
+    return (
+      <IonItem button href={to} onClick={onClick}>
+        {children}
+      </IonItem>
+    );
+  }
   return (
     <Link className={styles.menuLink} to={to}>
       <IonItem button onClick={onClick}>
@@ -60,16 +69,22 @@ const OverlayMenu = () => {
               <MenuLink to="/profile">
                 <MiniThumbnail user={currentUser} />
               </MenuLink>
-              <MenuLink to="/gallery" onClick={logout}>
+              <MenuLink hardLink to="/gallery" onClick={logout}>
                 Logout
               </MenuLink>
             </>
           ) : (
             <>
-              <MenuLink to="/login">Login</MenuLink>
-              <MenuLink to="/register">Register</MenuLink>
+              <MenuLink hardLink to="/login">
+                Login
+              </MenuLink>
+              <MenuLink hardLink to="/register">
+                Register
+              </MenuLink>
             </>
           )}
+        </IonList>
+        <IonList className={styles.menuList}>
           <IonItem>
             Internet status: {networkStatus.connected ? "Online" : "Offline"}
           </IonItem>

@@ -2,11 +2,13 @@ import { IonFab, IonFabButton, IonIcon } from "@ionic/react";
 import { add } from "ionicons/icons";
 import { Link } from "react-router-dom";
 import PictureList from "../gallery/pictureList";
-import { usePictures } from "../models";
 import DefaultOverlay from "../overlay";
+import useOptimisticPictures from "../models/picture/useOptimisticPictures";
+import GlobalError from "../extra/globalError";
 
 const UserPicturesPage = () => {
-  const { pictures } = usePictures();
+  const { optimisticPictures } = useOptimisticPictures();
+
   return (
     <DefaultOverlay
       title={"My pictures"}
@@ -21,7 +23,7 @@ const UserPicturesPage = () => {
         </IonFab>
       }
     >
-      <PictureList pictures={pictures} />
+      <PictureList pictures={optimisticPictures} />
     </DefaultOverlay>
   );
 };

@@ -1,6 +1,7 @@
 import { IonApp, IonRouterOutlet, setupIonicReact } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import { Route } from "react-router-dom";
+import { RecoilRoot } from "recoil";
 import { DefaultRoute, PrivateRoute, routes } from "./routing";
 
 import "@ionic/react/css/core.css";
@@ -21,20 +22,22 @@ import "./theme/variables.css";
 setupIonicReact();
 
 const App = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet>
-        <DefaultRoute />
-        {routes.map((route, index) =>
-          route.isPrivate ? (
-            <PrivateRoute key={index} {...route} />
-          ) : (
-            <Route key={index} {...route} />
-          )
-        )}
-      </IonRouterOutlet>
-    </IonReactRouter>
-  </IonApp>
+  <RecoilRoot>
+    <IonApp>
+      <IonReactRouter>
+        <IonRouterOutlet>
+          <DefaultRoute />
+          {routes.map((route, index) =>
+            route.isPrivate ? (
+              <PrivateRoute key={index} {...route} />
+            ) : (
+              <Route key={index} {...route} />
+            )
+          )}
+        </IonRouterOutlet>
+      </IonReactRouter>
+    </IonApp>
+  </RecoilRoot>
 );
 
 export default App;
