@@ -2,7 +2,7 @@ import DefaultOverlay from "../overlay/defaultOverlay";
 import PictureComponent from "./pictureComponent";
 import useParamsPicture from "./useParamsPicture";
 import SavePicture from "./savePicture";
-import GlobalError from "../extra/globalError";
+import { GlobalError } from "../extra/globalMessage";
 import { useAuth } from "../auth";
 
 const PicturePage = () => {
@@ -21,7 +21,7 @@ const PicturePage = () => {
       }
     >
       {picture && <PictureComponent picture={picture} />}
-      <GlobalError error={error} setError={setError} />
+      <GlobalError message={error} setMessage={setError} />
     </DefaultOverlay>
   );
 };
@@ -50,7 +50,7 @@ const EditPicturePage = () => {
       backHref={`/pictures/${picture?.id}`}
     >
       {picture && <SavePicture picture={picture} />}
-      <GlobalError error={error} setError={setError} />
+      <GlobalError message={error} setMessage={setError} />
     </DefaultOverlay>
   );
 };

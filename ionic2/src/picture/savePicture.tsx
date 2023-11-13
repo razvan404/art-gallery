@@ -16,7 +16,7 @@ import { useHistory } from "react-router";
 import { Picture, usePictureTypes, PictureToSave } from "../models";
 import { useAuth } from "../auth";
 import { imageUrl } from "../api";
-import GlobalError from "../extra/globalError";
+import { GlobalError } from "../extra/globalMessage";
 
 import styles from "./styles/savePicture.module.css";
 import useOptimisticPictures from "../models/picture/useOptimisticPictures";
@@ -250,10 +250,13 @@ const SavePicture = ({ picture }: Props) => {
           ]}
         />
         <GlobalError
-          error={pictureTypesError}
-          setError={setPictureTypesError}
+          message={pictureTypesError}
+          setMessage={setPictureTypesError}
         />
-        <GlobalError error={currentUserError} setError={setCurrentUserError} />
+        <GlobalError
+          message={currentUserError}
+          setMessage={setCurrentUserError}
+        />
       </div>
     </>
   );

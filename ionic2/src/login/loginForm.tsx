@@ -4,7 +4,7 @@ import { IonButton, IonInput, IonItem, IonLabel, IonTitle } from "@ionic/react";
 import styles from "./styles/loginForm.module.css";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth";
-import GlobalError from "../extra/globalError";
+import { GlobalError } from "../extra/globalMessage";
 
 const LoginForm = () => {
   const { currentUser, login, loading, error, setError } = useAuth();
@@ -51,7 +51,7 @@ const LoginForm = () => {
         <IonLabel>Don't have an account yet?</IonLabel>
         <Link to="/register">Register now!</Link>
       </form>
-      <GlobalError error={error} setError={setError} />
+      <GlobalError message={error} setMessage={setError} />
     </>
   );
 };

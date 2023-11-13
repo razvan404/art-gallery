@@ -6,7 +6,7 @@ import { downloadImageUrl, imageUrl } from "../api";
 import MiniThumbnail from "../user/miniThumbnail";
 
 import styles from "./styles/pictureComponent.module.css";
-import GlobalError from "../extra/globalError";
+import { GlobalError } from "../extra/globalMessage";
 
 type Props = {
   picture: Picture;
@@ -81,7 +81,10 @@ const PictureComponent = ({ picture }: Props) => {
         duration={3000}
         onDidDismiss={() => setShowToast(false)}
       />
-      <GlobalError error={pictureTypesError} setError={setPictureTypesError} />
+      <GlobalError
+        message={pictureTypesError}
+        setMessage={setPictureTypesError}
+      />
     </div>
   );
 };

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import PictureList from "../gallery/pictureList";
 import DefaultOverlay from "../overlay";
 import useOptimisticPictures from "../models/picture/useOptimisticPictures";
-import GlobalError from "../extra/globalError";
+import GlobalError from "../extra/globalMessage";
 
 const UserPicturesPage = () => {
   const { optimisticPictures } = useOptimisticPictures();
