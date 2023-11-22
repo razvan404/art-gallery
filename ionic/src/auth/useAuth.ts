@@ -4,6 +4,7 @@ import UserAPI from "../models/user/userApi";
 import AuthAPI from "./authApi";
 import { User } from "../models/user/types";
 import { logger } from "../core/logger";
+import usePreferences from "../core/usePreferences";
 
 const log = logger("UseAuth");
 
@@ -15,7 +16,7 @@ type AuthState = {
 };
 
 const initialState: AuthState = {
-  token: localStorage.getItem("authToken") ?? undefined,
+  token: undefined,
   loading: false,
 };
 
@@ -27,6 +28,7 @@ const authStateAtom = Recoil.atom<AuthState>({
 const useAuth = () => {
   const [state, setState] = Recoil.useRecoilState(authStateAtom);
   const { currentUser, token, loading, error } = state;
+  const { get, set, remove } = usePreferences();
 
   const deleteUser = React.useCallback(async () => {
     log("deleteUser - started");
@@ -50,7 +52,7 @@ const useAuth = () => {
       try {
         setState((prev) => ({ ...prev, loading: true }));
         const resp = await AuthAPI.login(usernameOrEmail, password);
-        localStorage.setItem("authToken", resp.token);
+        await set("authToken", resp.token);
         setState({ currentUser: resp.user, token: resp.token, loading: false });
         log("login - succeeded");
       } catch (err: any) {
@@ -58,7 +60,7 @@ const useAuth = () => {
         log("login - failed -", err.message);
       }
     },
-    []
+    [set]
   );
 
   const register = React.useCallback(
@@ -66,7 +68,7 @@ const useAuth = () => {
       try {
         setState((prev) => ({ ...prev, loading: true }));
         const resp = await AuthAPI.register(username, email, password);
-        localStorage.setItem("authToken", resp.token);
+        await set("authToken", resp.token);
         setState({ currentUser: resp.user, token: resp.token, loading: false });
         log("register - succeeded");
       } catch (err: any) {
@@ -74,21 +76,22 @@ const useAuth = () => {
         log("register - failed -", err.message);
       }
     },
-    []
+    [set]
   );
 
   const logout = React.useCallback(async () => {
     setState({ currentUser: undefined, token: undefined, loading: false });
-    localStorage.removeItem("authToken");
-  }, []);
+    remove("authToken");
+  }, [remove]);
 
   const me = React.useCallback(async () => {
-    if (token && !currentUser) {
+    if (token && !currentUser && !loading) {
       log("useEffect - token found");
 
+      setState((prev) => ({ ...prev, loading: true }));
       AuthAPI.me(token)
         .then((user) => {
-          setState({ ...state, currentUser: user, loading: false });
+          setState((prev) => ({ ...prev, currentUser: user, loading: false }));
           log("useEffect - token found - succeeded");
         })
         .catch((err) => {
@@ -99,11 +102,19 @@ const useAuth = () => {
           log("useEffect - token found - failed -", err.message);
         });
     }
-  }, [token]);
+  }, [token, currentUser, loading]);
+
+  React.useEffect(() => {
+    get("authToken").then((foundToken) => {
+      if (foundToken) {
+        setState((prev) => ({ ...prev, token: foundToken }));
+      }
+    });
+  }, [get]);
 
   React.useEffect(() => {
     me();
-  }, []);
+  }, [me]);
 
   const setError = React.useCallback((error?: string) => {
     setState((prev) => ({ ...prev, error }));

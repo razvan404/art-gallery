@@ -1,4 +1,4 @@
-import { authConfig } from "../core/auth";
+import { authConfig } from "../auth";
 import { logger } from "../core/logger";
 import { baseURL, webSocketURL } from "./consts";
 import { Response } from "./types";

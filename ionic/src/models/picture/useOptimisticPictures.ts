@@ -6,6 +6,7 @@ import { APIRequest, newWebSocket, sendRequest } from "../../api";
 import { useAuth } from "../../auth";
 import { Picture, PictureToSave } from "./types";
 import { logger } from "../../core/logger";
+import usePreferences from "../../core/usePreferences";
 
 const log = logger("UseOptimisticPictures");
 
@@ -39,12 +40,14 @@ const useOptimisticPictures = () => {
   const { networkStatus } = useNetwork();
   const [state, setState] = Recoil.useRecoilState(optimisticPicturesStateAtom);
   const { optimisticPictures, pendingRequests } = state;
+  const { set, get, remove } = usePreferences();
 
   React.useEffect(() => {
     if (pendingRequests.length === 0) {
-      localStorage.removeItem("pendingRequests");
+      remove("pendingRequests");
+    } else {
+      set("pendingRequests", JSON.stringify(pendingRequests));
     }
-    localStorage.setItem("pendingRequests", JSON.stringify(pendingRequests));
   }, [pendingRequests]);
 
   React.useEffect(() => {

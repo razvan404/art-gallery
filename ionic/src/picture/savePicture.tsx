@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import {
   IonAlert,
   IonButton,
@@ -11,12 +11,12 @@ import {
   IonTextarea,
 } from "@ionic/react";
 import { camera, trashBin } from "ionicons/icons";
-import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
 import { useHistory } from "react-router";
 import { Picture, usePictureTypes, PictureToSave } from "../models";
 import { useAuth } from "../auth";
 import { imageUrl } from "../api";
 import { GlobalError } from "../extra/globalMessage";
+import useCameraExtended from "../core/useCameraExtended";
 
 import styles from "./styles/savePicture.module.css";
 import useOptimisticPictures from "../models/picture/useOptimisticPictures";
@@ -41,8 +41,11 @@ const SavePicture = ({ picture }: Props) => {
     error: pictureTypesError,
     setError: setPictureTypesError,
   } = usePictureTypes();
+  const { takePhoto, deleteLastPhoto, setLastPhoto } = useCameraExtended();
   const [error, setError] = React.useState<string>();
   const [success, setSuccess] = React.useState<string>();
+  React.useEffect(() => () => deleteLastPhoto(), []);
+
   React.useEffect(() => {
     setPictureToSave({
       ...picture,
@@ -51,12 +54,10 @@ const SavePicture = ({ picture }: Props) => {
   }, [currentUser]);
 
   const selectPicture = React.useCallback(async () => {
-    const image = await Camera.getPhoto({
-      quality: 90,
-      allowEditing: true,
-      resultType: CameraResultType.DataUrl,
-      source: CameraSource.Photos,
-    });
+    const image = await takePhoto();
+    if (!image) {
+      return;
+    }
     setPictureToSave({
       ...pictureToSave,
       rawImage: image,
@@ -108,6 +109,7 @@ const SavePicture = ({ picture }: Props) => {
             } successfully`
           );
         }
+        setLastPhoto(null);
       })
       .catch((err) => {
         setError(err.message);
@@ -154,6 +156,7 @@ const SavePicture = ({ picture }: Props) => {
               color="danger"
               shape="round"
               onClick={() => {
+                deleteLastPhoto();
                 setPictureToSave({
                   ...pictureToSave,
                   rawImage: undefined,
