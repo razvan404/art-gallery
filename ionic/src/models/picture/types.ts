@@ -10,6 +10,10 @@ export type PictureToSave = {
   description?: string;
   authorId?: string;
   typeId?: number;
+  geoloc?: {
+    lat: number;
+    lng: number;
+  };
 };
 
 export type Picture = {
@@ -22,6 +26,10 @@ export type Picture = {
   authorId?: string;
   type?: PictureType;
   typeId?: number;
+  geoloc?: {
+    lat: number;
+    lng: number;
+  };
 };
 
 export type OptimisticPicture = (Picture | PictureToSave) & {
