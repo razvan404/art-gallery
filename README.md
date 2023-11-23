@@ -10,10 +10,18 @@ Application where users can upload pictures, my entity is Picture who have:
 
 ## Backend environment variables
 
-The .env variable should be in the backend directory, and should look like this:
+The `.env` variable should be in the backend directory, and should look like this:
 
 ```
   DATABASE_URL="file:./dev.db"
-  PORT=<DESIRED_PORT>
-  JWT_SECRET=<SOME_JWT_TOKEN>
+  PORT=<DESIRED PORT>
+  JWT_SECRET=<SOME JWT TOKEN>
+```
+
+## Ionic frontend environment variables
+
+You should create a folder named `secrets` inside `ionic/src` that should contain an `index.ts` with the following:
+
+```
+  export const GOOGLE_MAPS_API_KEY = "<GOOGLE MAPS API KEY>";
 ```
