@@ -20,6 +20,7 @@ import useCameraExtended from "../core/useCameraExtended";
 
 import styles from "./styles/savePicture.module.css";
 import useOptimisticPictures from "../models/picture/useOptimisticPictures";
+import Map, { Geoloc } from "../map";
 
 type Props = {
   picture?: Picture;
@@ -84,7 +85,9 @@ const SavePicture = ({ picture }: Props) => {
       !isNewPicture &&
       pictureToSave.title === picture?.title &&
       pictureToSave.description === picture?.description &&
-      pictureToSave.typeId === picture?.typeId
+      pictureToSave.typeId === picture?.typeId &&
+      pictureToSave.geoloc?.lat === picture?.geoloc?.lat &&
+      pictureToSave.geoloc?.lng === picture?.geoloc?.lng
     ) {
       errors.push("No changes were made");
     }
@@ -220,6 +223,26 @@ const SavePicture = ({ picture }: Props) => {
             </IonSelectOption>
           ))}
         </IonSelect>
+        {pictureToSave?.typeId == 4 && (
+          <>
+            <Map
+              id="save-picture-map"
+              location={pictureToSave?.geoloc}
+              onMapClick={(loc) => {
+                setPictureToSave({
+                  ...pictureToSave,
+                  geoloc: loc,
+                });
+              }}
+              onMarkerClick={() => {
+                setPictureToSave({
+                  ...pictureToSave,
+                  geoloc: undefined,
+                });
+              }}
+            />
+          </>
+        )}
         <IonButton
           className={styles.button}
           color="warning"

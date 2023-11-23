@@ -1,6 +1,7 @@
 import { User } from "../user/types";
 import { PictureType } from "../pictureType/types";
 import { Photo } from "@capacitor/camera";
+import { Geoloc } from "../../map/types";
 
 export type PictureToSave = {
   id?: string;
@@ -10,10 +11,7 @@ export type PictureToSave = {
   description?: string;
   authorId?: string;
   typeId?: number;
-  geoloc?: {
-    lat: number;
-    lng: number;
-  };
+  geoloc?: Geoloc;
 };
 
 export type Picture = {
@@ -26,10 +24,7 @@ export type Picture = {
   authorId?: string;
   type?: PictureType;
   typeId?: number;
-  geoloc?: {
-    lat: number;
-    lng: number;
-  };
+  geoloc?: Geoloc;
 };
 
 export type OptimisticPicture = (Picture | PictureToSave) & {

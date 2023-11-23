@@ -50,6 +50,8 @@ export default {
           image: true,
           authorId: true,
           typeId: true,
+          latitude: true,
+          longitude: true,
         },
       })
     );

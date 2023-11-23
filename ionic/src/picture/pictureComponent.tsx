@@ -7,6 +7,7 @@ import MiniThumbnail from "../user/miniThumbnail";
 
 import styles from "./styles/pictureComponent.module.css";
 import { GlobalError } from "../extra/globalMessage";
+import Map from "../map";
 
 type Props = {
   picture: Picture;
@@ -75,6 +76,17 @@ const PictureComponent = ({ picture }: Props) => {
           "{picture.description}"
         </IonLabel>
       </div>
+      {picture.typeId === 4 &&
+        picture.geoloc &&
+        picture.geoloc.lat &&
+        picture.geoloc.lng && (
+          <Map
+            id="pictures-detail-map"
+            location={picture.geoloc}
+            onMapClick={() => {}}
+            onMarkerClick={() => {}}
+          />
+        )}
       <IonToast
         isOpen={showToast}
         message="Link copied to the clipboard"
