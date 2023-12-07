@@ -17,13 +17,8 @@ Some key features for the Ionic implementation:
 - Camera was used for taking pictures as an alternative to just uploading them, the photo also being saved on the device before sending it to the server.
 - Google Maps API was used to showcase the locations of some photographies for a better user experience.
 
-![Login Page](media/ionicLogin.png)
-![Global List](media/ionicGlobalList.png)
-![User List](media/ionicUserList.png)
-![Example Picture](media/ionicExample1.png)
-![Example Picture](media/ionicExample2.png)
-![Edit Page](media/ionicEdit.png)
-
+<img alt="Login Page" src="media/ionicLogin.png" width="33%" /><img alt="Global List" src="media/ionicGlobalList.png" width="33%" /><img alt="User List" src="media/ionicUserList.png" width="33%" />
+<img alt="Example Picture" src="media/ionicExample1.png" width="33%" /><img alt="Example Picture" src="media/ionicExample2.png" width="33%" /><img alt="Edit Page" src="media/ionicEdit.png" width="33%" />
 ## Setup
 
 ### Backend setup
