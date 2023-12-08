@@ -35,6 +35,12 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         }.map { mapUserPreferences(it) }
 
     suspend fun save(userPreferences: UserPreferences) {
+        if (userPreferences.user == null || userPreferences.token == null) {
+            dataStore.edit { preferences ->
+                preferences.clear()
+            }
+            return
+        }
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.user] = Json.encodeToString(userPreferences.user)
             preferences[PreferencesKeys.token] = userPreferences.token ?: ""

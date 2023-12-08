@@ -14,6 +14,8 @@ object Api {
     private var gson = GsonBuilder().create()
     val tokenInterceptor = TokenInterceptor()
 
+    fun getImageUrl(imageId: String) = "http://$url/uploads/$imageId"
+
     fun getBearerToken() = "Bearer ${Api.tokenInterceptor.token}"
 
     val okHttpClient = OkHttpClient.Builder().apply {

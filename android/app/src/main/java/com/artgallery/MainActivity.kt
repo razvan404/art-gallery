@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("MyApp", "Hello world!")
         setContent {
             Log.d(TAG, "onCreate")
             MyApp {
@@ -28,10 +27,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (application !is MyApplication) {
-            Log.d("MyApp", "application is not MyApplication")
-            return
-        }
         lifecycleScope.launch {
             (application as MyApplication).container.pictureRepository.openWsClient()
         }
@@ -39,10 +34,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        if (application !is MyApplication) {
-            Log.d("MyApp", "application is not MyApplication")
-            return
-        }
         lifecycleScope.launch {
             (application as MyApplication).container.pictureRepository.closeWsClient()
         }

@@ -1,4 +1,4 @@
-package com.artgallery.auth.ui
+package com.artgallery.ui.auth
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column

@@ -23,8 +23,11 @@ class PictureRepository(
     suspend fun refresh() {
         Log.d(TAG, "refresh started")
         try {
-            val pictures = pictureService.findOwn(
-                authorization = Api.getBearerToken(),
+            if (Api.tokenInterceptor.user == null) {
+                Log.d(TAG, "refresh skipped")
+                return
+            }
+            val pictures = pictureService.findAll(
                 authorId = Api.tokenInterceptor.user?.id ?: ""
             )
             pictureDao.deleteAll()

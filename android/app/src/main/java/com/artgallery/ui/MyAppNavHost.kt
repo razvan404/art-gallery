@@ -12,7 +12,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.artgallery.api.Api
-import com.artgallery.auth.ui.LoginScreen
+import com.artgallery.ui.auth.LoginScreen
+import com.artgallery.ui.pictureList.PictureListScreen
 import com.artgallery.userPreferences.UserPreferences
 import com.artgallery.userPreferences.UserPreferencesViewModel
 
@@ -37,23 +38,23 @@ fun MyAppNavHost() {
         startDestination = authRoute
     ) {
         composable(picturesRoute) {
-//            ItemsScreen(
-//                onItemClick = { itemId ->
-//                    Log.d("MyAppNavHost", "navigate to item $itemId")
-//                    navController.navigate("$itemsRoute/$itemId")
-//                },
-//                onAddItem = {
-//                    Log.d("MyAppNavHost", "navigate to new item")
-//                    navController.navigate("$itemsRoute-new")
-//                },
-//                onLogout = {
-//                    Log.d("MyAppNavHost", "logout")
-//                    myAppViewModel.logout()
-//                    Api.tokenInterceptor.token = null
-//                    navController.navigate(authRoute) {
-//                        popUpTo(0)
-//                    }
-//                })
+            PictureListScreen(
+                onRowClick = { pictureId ->
+                    Log.d("MyAppNavHost", "navigate to picture $pictureId")
+                    navController.navigate("$picturesRoute/$pictureId")
+                },
+                onAddPicture = {
+                    Log.d("MyAppNavHost", "navigate to new picture")
+                    navController.navigate("${picturesRoute}Create")
+                },
+                onLogout = {
+                    Log.d("MyAppNavHost", "logout")
+                    myAppViewModel.logout()
+                    Api.tokenInterceptor.token = null
+                    navController.navigate(authRoute) {
+                        popUpTo(0)
+                    }
+                })
         }
         composable(
             route = "$picturesRoute/{id}",
@@ -84,8 +85,9 @@ fun MyAppNavHost() {
     }
     LaunchedEffect(userPreferencesUiState.token) {
         if (userPreferencesUiState.token != null && userPreferencesUiState.token != "") {
-            Log.d("MyAppNavHost", "Launched effect navigate to items")
+            Log.d("MyAppNavHost", "Launched effect navigate to pictures")
             Api.tokenInterceptor.token = userPreferencesUiState.token
+            Api.tokenInterceptor.user = userPreferencesUiState.user
             myAppViewModel.setToken(userPreferencesUiState.token)
             navController.navigate(picturesRoute) {
                 popUpTo(0)

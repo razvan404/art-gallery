@@ -1,5 +1,6 @@
 package com.artgallery.models.picture
 
+import retrofit2.http.Query
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -10,12 +11,8 @@ import retrofit2.http.Path
 
 interface PictureService {
     @GET("/api/pictures")
-    suspend fun findAll(): List<Picture>
-
-    @GET("/api/pictures/authorId={authorId}")
-    suspend fun findOwn(
-        @Header("Authorization") authorization: String,
-        @Path("authorId") authorId: String,
+    suspend fun findAll(
+        @Query("authorId") authorId: String
     ): List<Picture>
 
     @GET("/api/pictures/{id}")
