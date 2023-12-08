@@ -76,7 +76,7 @@ class PictureRepository(
         awaitClose { pictureWsClient.closeSocket() }
     }
 
-    suspend fun update(picture: Picture): Picture {
+    suspend fun update(picture: PictureToSave): Picture {
         Log.d(TAG, "update $picture...")
         val updatedPicture =
             pictureService.update(
@@ -97,6 +97,14 @@ class PictureRepository(
         Log.d(TAG, "save $picture succeeded")
         handlePictureCreated(createdPicture)
         return createdPicture
+    }
+
+    suspend fun find(id: String): Picture {
+        Log.d(TAG, "find $id...")
+        val picture = pictureService.find(id = id)
+        Log.d(TAG, "find $id succeeded")
+        handlePictureUpdated(picture)
+        return picture
     }
 
     private suspend fun handlePictureDeleted(picture: Picture) {

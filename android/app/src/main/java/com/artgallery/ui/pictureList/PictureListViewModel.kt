@@ -21,7 +21,7 @@ class PictureListViewModel(private val picturesRepository: PictureRepository) : 
         loadItems()
     }
 
-    fun loadItems() {
+    private fun loadItems() {
         Log.d(TAG, "loadItems...")
         viewModelScope.launch {
             picturesRepository.refresh()

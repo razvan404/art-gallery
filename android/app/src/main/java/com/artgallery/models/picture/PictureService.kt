@@ -32,6 +32,6 @@ interface PictureService {
     suspend fun update(
         @Header("Authorization") authorization: String,
         @Path("id") id: String?,
-        @Body picture: Picture
+        @Body picture: PictureToSave
     ): Picture
 }

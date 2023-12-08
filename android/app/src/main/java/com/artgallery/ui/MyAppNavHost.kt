@@ -14,6 +14,7 @@ import androidx.navigation.navArgument
 import com.artgallery.api.Api
 import com.artgallery.ui.auth.LoginScreen
 import com.artgallery.ui.pictureList.PictureListScreen
+import com.artgallery.ui.savePicture.SavePictureScreen
 import com.artgallery.userPreferences.UserPreferences
 import com.artgallery.userPreferences.UserPreferencesViewModel
 
@@ -61,17 +62,17 @@ fun MyAppNavHost() {
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         )
         {
-//            ItemScreen(
-//                itemId = it.arguments?.getString("id"),
-//                onClose = { onCloseItem() }
-//            )
+            SavePictureScreen(
+                pictureId = it.arguments?.getString("id"),
+                onClose = { onCloseItem() }
+            )
         }
         composable(route = "$picturesRoute-create")
         {
-//            ItemScreen(
-//                itemId = null,
-//                onClose = { onCloseItem() }
-//            )
+            SavePictureScreen(
+                pictureId = null,
+                onClose = { onCloseItem() }
+            )
         }
         composable(route = authRoute)
         {

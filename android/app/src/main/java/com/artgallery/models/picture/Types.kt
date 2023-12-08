@@ -34,6 +34,7 @@ data class Picture(
 data class PictureEvent(val type: String, val payload: Picture)
 
 data class PictureToSave(
+    val id: String?,
     val title: String?,
     val image: String?,
     val rawImage: Photo?,
@@ -41,4 +42,16 @@ data class PictureToSave(
     val authorId: String?,
     val typeId: Int?,
     val geoloc: Geoloc?,
-)
+) {
+    constructor(picture: Picture) : this(
+        picture.id,
+        picture.title,
+        picture.image,
+        null,
+        picture.description,
+        picture.authorId,
+        picture.typeId,
+        picture.geoloc,
+    )
+    constructor() : this(null, null, null, null, null, null, null, null)
+}

@@ -2,7 +2,7 @@ package com.artgallery.core
 
 import androidx.room.TypeConverter
 import com.artgallery.map.Geoloc
-import java.lang.Integer.parseInt
+import java.lang.Float.parseFloat
 import java.util.Date
 
 class Converters {
@@ -18,7 +18,7 @@ class Converters {
 
     @TypeConverter
     fun fromGeoloc(value: String?): Geoloc? {
-        return value?.let { str -> str.split(',').let { Geoloc(parseInt(it[0]), parseInt(it[1])) } }
+        return value?.let { str -> str.split(',').let { Geoloc(parseFloat(it[0]), parseFloat(it[1])) } }
     }
 
     @TypeConverter
