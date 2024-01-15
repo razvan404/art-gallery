@@ -6,9 +6,9 @@ The frontend application was integrated in TypeScript with Ionic (for cross-plat
 
 For the backend environment, Prisma framework with SQLite was used for data persistency, and the pictures were saved using the OS file system. RESTful architecture was used for accesing the resources from the other environments, and there are some private resources which requires JWT authentication. Also, a web socket server was managed to authenticate the user when its resources are changed.
 
-## Frontend
+## Application
 
-Some key features for the Frontend implementation:
+Some key features:
 
 - Authentication using JWT tokens
 - Web sockets to update some resources when updated on the backend
@@ -20,21 +20,6 @@ Some key features for the Frontend implementation:
 <img alt="Login Page" src="media/ionicLogin.png" width="33%" /><img alt="Global List" src="media/ionicGlobalList.png" width="33%" /><img alt="User List" src="media/ionicUserList.png" width="33%" />
 <img alt="Example Picture" src="media/ionicExample1.png" width="33%" /><img alt="Example Picture" src="media/ionicExample2.png" width="33%" /><img alt="Edit Page" src="media/ionicEdit.png" width="33%" />
 ## Setup
-
-### Backend setup
-
-1. Be sure to have `node.js` installed.
-2. Enter the `backend` directory and installed the required node packages using the command:
-
-```bash
-$ npm install
-```
-
-3. Run the server using the command:
-
-```bash
-$ npm run dev
-```
 
 ### Frontend setup
 
@@ -57,6 +42,21 @@ You should create a folder named `secrets` inside `frontend/src` that should con
 
 ```javascript
 export const GOOGLE_MAPS_API_KEY = "<GOOGLE MAPS API KEY>";
+```
+
+### Backend setup
+
+1. Be sure to have `node.js` installed.
+2. Enter the `backend` directory and installed the required node packages using the command:
+
+```bash
+$ npm install
+```
+
+3. Run the server using the command:
+
+```bash
+$ npm run dev
 ```
 
 ### Backend environment variables
